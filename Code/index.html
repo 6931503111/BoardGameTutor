@@ -755,6 +755,77 @@
         const qn = () => { Q.i++; Q.a = null; quiz(Q.id) };
         const qr = () => { const id = Q.id; Q = {}; quiz(id) };
 
+        /* FR-5 / FR-8 ผู้ช่วย AI: ค้นฐานความรู้ของเกม (RAG) แล้วให้โมเดลบน Ollama เรียบเรียงคำตอบ */
+        let W = 0; const TH = 1.2;
+        const SW = ['คืออะไร', 'ทำอย่างไร', 'อย่างไร', 'เมื่อไหร่', 'เมื่อไร', 'เท่าไหร่', 'เท่าไร', 'ที่ไหน', 'ตรงไหน', 'อะไร', 'ไหม', 'หรือไม่', 'ยังไง', 'ทำไม', 'ใคร', 'กี่', 'บ้าง', 'ช่วย', 'หน่อย', 'ของ', 'ขอ', 'และ', 'แล้ว', 'ที่', 'เป็น', 'คือ', 'ให้', 'ได้', 'จะ', 'ต้อง', 'ควร', 'เกม', 'เล่น', 'ครับ', 'ค่ะ'];
+        const tok = (t, q) => { t = t.toLowerCase(); if (q) SW.forEach(w => t = t.split(w).join(' ')); const r = new Set((t.match(/[a-z0-9]{2,}/g) || []).map(w => 'w' + w)); t.split(/[^\u0E00-\u0E7F]+/).forEach(x => { x = x.replace(/[\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]/g, ''); for (let i = 0; i < x.length - 1; i++)r.add(x.slice(i, i + 2)) }); return r };
+        const kb = g => [...g.st.map(x => ({ t: x[0], x: x[1], k: 'บทเรียน' })), ...g.r.map(x => ({ t: x[0], x: x[1], k: 'กฎ' }))];
+        function retr(g, q) {
+            const C = kb(g).map(c => ({ ...c, b: tok(c.t + ' ' + c.x), h: tok(c.t) })), Q = [...tok(q, 1)], df = {};
+            Q.forEach(b => df[b] = C.filter(c => c.b.has(b)).length);
+            return C.map(c => { let s = c.k == 'กฎ' ? .1 : 0, n = 0, st = 0; Q.forEach(b => { if (c.b.has(b) && df[b]) { s += (b[0] == 'w' ? 3 : 1) / df[b] * (c.h.has(b) ? 1.5 : 1); n++; if (b[0] == 'w') st = 1 } }); return { c, s, ok: (st || n >= 3) && s >= TH } }).filter(o => o.ok).sort((x, y) => y.s - x.s).slice(0, 3).map(o => o.c)
+        }
+        async function llm(g, cv, hits, q) {
+            const c = new AbortController(), tm = setTimeout(() => c.abort(), 90000);
+            const ctx = hits.map((h, i) => `[${i + 1}] ${h.k}: ${h.t} - ${h.x}`).join('\n');
+            const hist = cv.slice(-9, -1).filter(m => !m.e).map(m => ({ role: m.r == 'u' ? 'user' : 'assistant', content: m.t }));
+            try {
+                const r = await fetch(S.cfg.url.replace(/\/$/, '') + '/api/chat', {
+                    method: 'POST', signal: c.signal, headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ model: S.cfg.m, stream: false, messages: [{ role: 'system', content: `คุณคือผู้ช่วยอธิบายกฎบอร์ดเกม ${g.n} ตอบเป็นภาษาไทย สั้น ชัดเจน ใช้เฉพาะข้อมูลอ้างอิงที่ให้ ถ้าข้อมูลไม่พอให้บอกว่าไม่แน่ใจ ห้ามเดา` }, ...hist, { role: 'user', content: `ข้อมูลอ้างอิง:\n${ctx}\n\nคำถาม: ${q}` }] })
+                });
+                if (!r.ok) throw 0; const j = await r.json(); return j.message.content.trim()
+            } finally { clearTimeout(tm) }
+        }
+        const bub = m => `<div class="bb ${m.r}${m.e ? ' err' : ''}">${E(m.t).replace(/\n/g, '<br>')}${m.s && m.s.length ? `<div class="src">${m.s.map(x => `<span class="tag">📖 ${E(x)}</span>`).join('')}</div>` : ''}${m.ms ? `<small class="mut">ตอบใน ${(m.ms / 1000).toFixed(1)} วินาที${m.demo ? ' · โหมดสาธิต ไม่ผ่านโมเดล' : ''}</small>` : ''}</div>`;
+        const draw = () => { const c = $('#cv'); if (!c) return; const l = S.cv[S.lg] || []; c.innerHTML = (l.map(bub).join('') || '<p class="mut">ถามกฎของเกมนี้ได้เลย ผู้ช่วยจะตอบจากฐานความรู้ของเกมและแสดงแหล่งอ้างอิง ถามต่อจากคำตอบเดิมได้โดยไม่ต้องพิมพ์คำถามซ้ำ</p>') + (W ? '<div class="bb a mut">กำลังค้นข้อมูลและเรียบเรียงคำตอบ...</div>' : ''); if (c.lastElementChild) c.lastElementChild.scrollIntoView({ block: 'nearest' }) };
+        function ai(id) {
+            const l = pub(); let g = G1(id || S.lg); if (!g || !(g.pub || S.ad)) g = l[0];
+            if (!g) return app('<h1>ผู้ช่วย AI</h1><p class="mut">ยังไม่มีเกมที่เผยแพร่</p>');
+            S.lg = g.id; const r = S.rt, a = r.length ? (r.reduce((x, y) => x + y, 0) / r.length / 1000).toFixed(1) : 0;
+            app(`<h1>ผู้ช่วย AI ตอบกฎ</h1><label>เกมที่ต้องการถาม<select id="aig" onchange="location.hash='#/ai/'+this.value">${l.map(x => `<option value="${x.id}" ${x.id == g.id ? 'selected' : ''}>${E(x.n)}</option>`).join('')}</select></label>
+ <details class="card2"><summary><b>ตั้งค่าโมเดล (Ollama)</b></summary><label>Ollama URL<input id="ou" class="in" value="${E(S.cfg.url)}"></label><label>ชื่อโมเดล<input id="om" class="in" value="${E(S.cfg.m)}"></label><label><input type="checkbox" id="od" ${S.cfg.demo ? 'checked' : ''}> โหมดสาธิต (ตอบจากฐานความรู้โดยไม่เรียกโมเดล)</label><div class="row"><button class="btn pri" onclick="scfg()">บันทึกตั้งค่า</button></div><p class="mut">${r.length ? `เวลาตอบเฉลี่ย ${a} วินาที จาก ${r.length} ครั้งล่าสุด` : 'ยังไม่มีข้อมูลเวลาตอบ'}</p></details>
+ <div id="cv" class="cv"></div>
+ <div class="chips">${g.r.slice(0, 4).map((x, i) => `<button class="tag" onclick="fq(${i})">${E(x[0])} คืออะไร</button>`).join('')}</div>
+ <div class="ask"><input id="qi" class="in" placeholder="พิมพ์คำถามเกี่ยวกับกฎ..." aria-label="คำถาม" onkeydown="if(event.key=='Enter')ask()"><button class="btn pri" onclick="ask()">ส่ง</button></div>
+ <button class="btn" onclick="nc()">เริ่มบทสนทนาใหม่</button>`); draw()
+        }
+        const fq = i => { $('#qi').value = G1(S.lg).r[i][0] + ' คืออะไร'; $('#qi').focus() };
+        const nc = () => { delete S.cv[S.lg]; save(); ai(S.lg) };
+        function scfg() { S.cfg = { url: V('ou') || 'http://localhost:11434', m: V('om') || 'llama3.2', demo: $('#od').checked ? 1 : 0 }; save(); msg('บันทึกตั้งค่าแล้ว') }
+        async function ask() {
+            const g = G1(S.lg), i = $('#qi'), q = i.value.trim(); if (!q) return msg('พิมพ์คำถามก่อนส่ง');
+            const cv = S.cv[g.id] = S.cv[g.id] || [], prev = [...cv].reverse().find(m => m.r == 'u');
+            cv.push({ r: 'u', t: q }); i.value = '';
+            const fin = m => { cv.push(m); W = 0; S.cv[g.id] = cv.slice(-30); save(); draw() };
+            W = 1; draw();
+            if (q.replace(/[\s\u0021-\u002F\u003A-\u0040]+/g, '').length < 3) return fin({ r: 'a', t: 'ขอรายละเอียดเพิ่มอีกนิดได้ไหม เช่น อยากรู้กฎข้อไหนหรือสถานการณ์แบบไหน จะได้หาข้อมูลได้ตรงขึ้น' });
+            let h = retr(g, q);
+            if (!h.length && prev && (q.length <= 8 || /แล้ว|ล่ะ|นั้น|นี้|ต่อ|อีก|งั้น|เหมือน|ตัวอย่าง|เพิ่มเติม|อธิบาย/.test(q))) h = retr(g, prev.t + ' ' + q);
+            if (!h.length) return fin({ r: 'a', t: 'ไม่พบข้อมูลที่รองรับคำถามนี้ในฐานความรู้ของเกมนี้ จึงยังตอบไม่ได้ ลองถามให้เฉพาะเจาะจงขึ้น หรือตรวจกติกาในคู่มือเกม' });
+            const t0 = performance.now(); let a;
+            try { a = S.cfg.demo ? 'ตามฐานความรู้ของเกมนี้: ' + h[0].x + (h[1] ? '\n\nที่เกี่ยวข้อง: ' + h[1].x : '') : await llm(g, cv, h, q) }
+            catch (e) { return fin({ r: 'a', e: 1, t: 'ผู้ช่วย AI ใช้งานไม่ได้ในขณะนี้ ตรวจสอบว่าเปิด Ollama อยู่ และ URL กับชื่อโมเดลในส่วนตั้งค่าถูกต้อง แล้วลองส่งอีกครั้ง หรือเปิดโหมดสาธิตเพื่อดูหน้าจอโดยไม่เรียกโมเดล' }) }
+            const ms = performance.now() - t0; S.rt = [...S.rt, Math.round(ms)].slice(-30);
+            fin({ r: 'a', t: a, s: h.map(x => x.k + ': ' + x.t), ms, demo: S.cfg.demo })
+        }
+
+        /* ข้อมูลผู้ใช้ ประวัติการดู ข้อเสนอแนะ */
+        function usr() {
+            const d = Object.values(S.p).reduce((a, b) => a + b.length, 0);
+            app(`<h1>ข้อมูลผู้ใช้</h1><div class="card2"><label>ชื่อที่แสดง<input id="un" class="in" value="${E(S.u)}"></label><button class="btn pri" onclick="sn()">บันทึกชื่อ</button></div>
+ <div class="grid"><div class="card"><span class="n">${Object.keys(S.p).length}</span><span class="mut">เกมที่เริ่มเรียนแล้ว</span></div><div class="card"><span class="n">${d}</span><span class="mut">ขั้นตอนที่เรียนแล้ว</span></div><div class="card"><span class="n">${Object.keys(S.q).length}</span><span class="mut">เกมที่ทำแบบทดสอบแล้ว</span></div></div>
+ <p class="mut">ข้อมูลการเรียนของคุณเก็บไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น</p>`)
+        }
+        function sn() { const n = V('un'); if (!n) return msg('กรอกชื่อก่อนบันทึก'); S.u = n; save(); msg('บันทึกชื่อแล้ว') }
+        function hist() {
+            const l = S.h.map(G1).filter(g => g && (g.pub || S.ad));
+            app(`<h1>ประวัติการดู</h1>${l.length ? `<div class="grid">${l.map(card).join('')}</div><div class="row"><button class="btn" onclick="S.h=[];save();hist()">ล้างประวัติ</button></div>` : '<p class="mut">ยังไม่มีประวัติ เลือกเกมจากหน้าแรกเพื่อเริ่มดู</p>'}`)
+        }
+        function fbp() { app(`<h1>ข้อเสนอแนะ</h1><div class="card2"><label>หัวข้อ<select id="ft"><option>เนื้อหากฎไม่ถูกต้อง</option><option>ใช้งานยาก</option><option>อยากให้เพิ่มเกม</option><option>อื่น ๆ</option></select></label><label>รายละเอียด<textarea id="fx" rows="4"></textarea></label><button class="btn pri" onclick="sf()">ส่งข้อเสนอแนะ</button></div>${S.fb.length ? `<h2>ที่คุณเคยส่ง</h2>${S.fb.map(f => `<div class="card2"><span class="tag">${E(f.t)}</span><p>${E(f.x)}</p></div>`).join('')}` : ''}`) }
+        function sf() { const x = V('fx'); if (!x) return msg('เขียนรายละเอียดก่อนส่ง'); S.fb.unshift({ t: V('ft'), x }); save(); fbp(); msg('ส่งข้อเสนอแนะแล้ว') }
+        function lo() { S.ad = 0; save(); msg('ออกจากระบบแล้ว'); location.hash = '#/home'; route() }
+
     </script>
 
 </body>
