@@ -1,224 +1,762 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Board Game Tutor</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-:root{--bg1:#DDDFF5;--bg2:#FFFFFF;--ink:#1B2238;--felt:#2F6BFF;--pt:#fff;--card:#fff;--line:#D5D9EC;--red:#D6453D;--ok:#1F7A4D;--mut:#5F6784;--sb:rgba(255,255,255,.55);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#161F40;--bg2:#0B1124;--ink:#E7EBFA;--felt:#6C98FF;--pt:#0B1124;--card:#18213F;--line:#2B3764;--mut:#9AA6CF;--ok:#4CC38A;--red:#F07A72;--sb:rgba(24,33,63,.7)}}
-:root[data-theme="dark"]{--bg1:#161F40;--bg2:#0B1124;--ink:#E7EBFA;--felt:#6C98FF;--pt:#0B1124;--card:#18213F;--line:#2B3764;--mut:#9AA6CF;--ok:#4CC38A;--red:#F07A72;--sb:rgba(24,33,63,.7)}
-*{box-sizing:border-box}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;color:var(--ink);background:linear-gradient(160deg,var(--bg1),var(--bg2) 65%) fixed,var(--bg2);font:16px/1.6 'Noto Sans Thai',system-ui,sans-serif}
-#shell{display:flex;min-height:100vh}
-aside{width:230px;flex:none;align-self:flex-start;position:sticky;top:env(safe-area-inset-top,0px);height:100vh;height:100dvh;display:flex;flex-direction:column;padding:14px 0;background:var(--sb);border-right:1px solid var(--line);transition:width .2s}
-aside svg{flex:none;color:var(--felt)}
-aside button{background:none;border:0;cursor:pointer;color:var(--felt);padding:0}
-#mb{align-self:flex-end;margin:0 21px 12px 0}
-aside nav a{display:flex;align-items:center;gap:14px;padding:14px 21px;color:var(--ink);text-decoration:none;border-top:1px solid var(--line);font-weight:600;font-size:15px}
-aside nav a.on{background:color-mix(in srgb,var(--felt) 13%,transparent)}
-.out{margin:auto 0 0 21px;padding:8px 0!important;align-self:flex-start}
-.mini aside{width:62px}.mini aside nav span{display:none}
-@media(max-width:760px){aside{width:62px}aside nav span{display:none}.mainw{padding:18px 14px 64px!important}}
-.mainw{flex:1;min-width:0;padding:24px 30px 64px}
-.sbar{position:relative;max-width:640px;margin:0 auto 28px}
-.sbar span{position:absolute;left:20px;top:50%;transform:translateY(-50%);display:flex;color:var(--mut)}
-.sbar input{width:100%;padding:13px 20px 13px 52px;border-radius:999px;border:1.5px solid var(--mut);background:transparent;color:var(--ink);font:inherit}
-main{max-width:960px;margin:0 auto}
-h1,h2{font-weight:700;line-height:1.4;margin:.2em 0 .6em}
-h1{font-size:24px}h2{font-size:17px;margin-top:1.1em}
-a{color:var(--felt)}
-.mut{color:var(--mut)}
-.hm{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(0,1fr);gap:36px}
-@media(max-width:820px){.hm{grid-template-columns:1fr;gap:8px}}
-.feat{display:flex;align-items:flex-end;height:190px;border-radius:18px;padding:18px;color:#fff;text-decoration:none;font-weight:700;font-size:17px;background:linear-gradient(115deg,#13A050 0 52%,#1F2B5A 52%)}
-.feat i{width:34px;height:34px;border:2px solid #fff;border-radius:9px;display:inline-grid;place-items:center;margin-right:10px}
-.feat svg{color:#fff}
-.tags{margin:12px 0 4px}
-.cats{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.cat{aspect-ratio:1;border-radius:14px;color:#fff;padding:14px;display:flex;flex-direction:column;justify-content:space-between;text-decoration:none;font-weight:700}
-.cat svg{color:#fff}
-.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
-.card,.card2{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;color:inherit}
-.card{display:flex;flex-direction:column;gap:6px;text-decoration:none}
-a.card:hover{border-color:var(--felt)}
-.card2{margin:12px 0}
-.em{font-size:34px;line-height:1.2}
-.n{font-size:28px;font-weight:700;line-height:1.2}
-.tag{display:inline-block;background:color-mix(in srgb,var(--mut) 14%,transparent);border-radius:999px;padding:1px 12px;font-size:13px;margin:0 6px 4px 0}
-label{display:block;font-weight:600}
-.in,select,textarea{width:100%;padding:10px 13px;margin:6px 0 12px;font:inherit;font-weight:400;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:10px}
-.btn{font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:2px solid var(--felt);background:transparent;color:var(--felt);cursor:pointer;text-decoration:none;display:inline-block}
-.btn.pri{background:var(--felt);color:var(--pt)}
-.btn:disabled{opacity:.4;cursor:default}
-.row{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
-.opt{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:10px;padding:11px 14px;margin:8px 0;cursor:pointer}
-.opt:hover:not(:disabled){border-color:var(--felt)}
-.opt.ok{border-color:var(--ok)}.opt.bad{border-color:var(--red)}
-.fb{padding:12px 14px;border-radius:10px;border-left:6px solid;background:var(--card);margin:12px 0}
-.fb.ok{border-color:var(--ok)}.fb.bad{border-color:var(--red)}
-.bar{height:10px;background:var(--line);border-radius:9px;overflow:hidden;margin:8px 0}
-.bar i{display:block;height:100%;background:var(--felt)}
-.ck{list-style:none;padding:0;margin:4px 0;font-size:14px}
-summary{cursor:pointer}
-:focus-visible{outline:3px solid var(--felt);outline-offset:2px}
-#t{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg2);padding:10px 18px;border-radius:10px;display:none;z-index:9;max-width:92%}
-.cds{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0 4px}
-.cd{width:124px;min-height:176px;padding:12px 10px;border-radius:14px;border:2px solid hsl(var(--h) 50% 42%);background:linear-gradient(160deg,hsl(var(--h) 75% 94%),hsl(var(--h) 65% 82%));color:#1B2238;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;box-shadow:0 3px 0 hsl(var(--h) 50% 42% / .35)}
-.ci{font-size:40px;line-height:1.1}.cd b{font-size:14px;line-height:1.3}.cd small{font-size:12px;line-height:1.35}
-@media(prefers-reduced-motion:no-preference){.cd{transition:transform .15s}.cd:hover{transform:translateY(-4px) rotate(-1.5deg)}}
-.cv{display:flex;flex-direction:column;gap:10px;margin:14px 0;min-height:120px}
-.bb{max-width:88%;padding:10px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card);overflow-wrap:anywhere}
-.bb.u{align-self:flex-end;background:var(--felt);color:var(--pt);border-color:var(--felt)}
-.bb.err{border-color:var(--red)}
-.src{margin-top:6px}
-.chips{margin:6px 0 10px}
-.chips .tag{border:0;cursor:pointer;font-family:inherit;color:var(--ink)}
-.ask{display:flex;gap:8px;align-items:flex-start}
-.ask .in{margin:0;flex:1}
-</style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Board Game Tutor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg1: #DDDFF5;
+            --bg2: #FFFFFF;
+            --ink: #1B2238;
+            --felt: #2F6BFF;
+            --pt: #fff;
+            --card: #fff;
+            --line: #D5D9EC;
+            --red: #D6453D;
+            --ok: #1F7A4D;
+            --mut: #5F6784;
+            --sb: rgba(255, 255, 255, .55);
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px)
+        }
+
+        @media(prefers-color-scheme:dark) {
+            :root:not([data-theme="light"]) {
+                --bg1: #161F40;
+                --bg2: #0B1124;
+                --ink: #E7EBFA;
+                --felt: #6C98FF;
+                --pt: #0B1124;
+                --card: #18213F;
+                --line: #2B3764;
+                --mut: #9AA6CF;
+                --ok: #4CC38A;
+                --red: #F07A72;
+                --sb: rgba(24, 33, 63, .7)
+            }
+        }
+
+        :root[data-theme="dark"] {
+            --bg1: #161F40;
+            --bg2: #0B1124;
+            --ink: #E7EBFA;
+            --felt: #6C98FF;
+            --pt: #0B1124;
+            --card: #18213F;
+            --line: #2B3764;
+            --mut: #9AA6CF;
+            --ok: #4CC38A;
+            --red: #F07A72;
+            --sb: rgba(24, 33, 63, .7)
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-padding-top: env(safe-area-inset-top, 0px)
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background: linear-gradient(160deg, var(--bg1), var(--bg2) 65%) fixed, var(--bg2);
+            font: 16px/1.6 'Noto Sans Thai', system-ui, sans-serif
+        }
+
+        #shell {
+            display: flex;
+            min-height: 100vh
+        }
+
+        aside {
+            width: 230px;
+            flex: none;
+            align-self: flex-start;
+            position: sticky;
+            top: env(safe-area-inset-top, 0px);
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            padding: 14px 0;
+            background: var(--sb);
+            border-right: 1px solid var(--line);
+            transition: width .2s
+        }
+
+        aside svg {
+            flex: none;
+            color: var(--felt)
+        }
+
+        aside button {
+            background: none;
+            border: 0;
+            cursor: pointer;
+            color: var(--felt);
+            padding: 0
+        }
+
+        #mb {
+            align-self: flex-end;
+            margin: 0 21px 12px 0
+        }
+
+        aside nav a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 21px;
+            color: var(--ink);
+            text-decoration: none;
+            border-top: 1px solid var(--line);
+            font-weight: 600;
+            font-size: 15px
+        }
+
+        aside nav a.on {
+            background: color-mix(in srgb, var(--felt) 13%, transparent)
+        }
+
+        .out {
+            margin: auto 0 0 21px;
+            padding: 8px 0 !important;
+            align-self: flex-start
+        }
+
+        .mini aside {
+            width: 62px
+        }
+
+        .mini aside nav span {
+            display: none
+        }
+
+        @media(max-width:760px) {
+            aside {
+                width: 62px
+            }
+
+            aside nav span {
+                display: none
+            }
+
+            .mainw {
+                padding: 18px 14px 64px !important
+            }
+        }
+
+        .mainw {
+            flex: 1;
+            min-width: 0;
+            padding: 24px 30px 64px
+        }
+
+        .sbar {
+            position: relative;
+            max-width: 640px;
+            margin: 0 auto 28px
+        }
+
+        .sbar span {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            color: var(--mut)
+        }
+
+        .sbar input {
+            width: 100%;
+            padding: 13px 20px 13px 52px;
+            border-radius: 999px;
+            border: 1.5px solid var(--mut);
+            background: transparent;
+            color: var(--ink);
+            font: inherit
+        }
+
+        main {
+            max-width: 960px;
+            margin: 0 auto
+        }
+
+        h1,
+        h2 {
+            font-weight: 700;
+            line-height: 1.4;
+            margin: .2em 0 .6em
+        }
+
+        h1 {
+            font-size: 24px
+        }
+
+        h2 {
+            font-size: 17px;
+            margin-top: 1.1em
+        }
+
+        a {
+            color: var(--felt)
+        }
+
+        .mut {
+            color: var(--mut)
+        }
+
+        .hm {
+            display: grid;
+            grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr);
+            gap: 36px
+        }
+
+        @media(max-width:820px) {
+            .hm {
+                grid-template-columns: 1fr;
+                gap: 8px
+            }
+        }
+
+        .feat {
+            display: flex;
+            align-items: flex-end;
+            height: 190px;
+            border-radius: 18px;
+            padding: 18px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 17px;
+            background: linear-gradient(115deg, #13A050 0 52%, #1F2B5A 52%)
+        }
+
+        .feat i {
+            width: 34px;
+            height: 34px;
+            border: 2px solid #fff;
+            border-radius: 9px;
+            display: inline-grid;
+            place-items: center;
+            margin-right: 10px
+        }
+
+        .feat svg {
+            color: #fff
+        }
+
+        .tags {
+            margin: 12px 0 4px
+        }
+
+        .cats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px
+        }
+
+        .cat {
+            aspect-ratio: 1;
+            border-radius: 14px;
+            color: #fff;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-decoration: none;
+            font-weight: 700
+        }
+
+        .cat svg {
+            color: #fff
+        }
+
+        .grid {
+            display: grid;
+            gap: 14px;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr))
+        }
+
+        .card,
+        .card2 {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 16px;
+            color: inherit
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-decoration: none
+        }
+
+        a.card:hover {
+            border-color: var(--felt)
+        }
+
+        .card2 {
+            margin: 12px 0
+        }
+
+        .em {
+            font-size: 34px;
+            line-height: 1.2
+        }
+
+        .n {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.2
+        }
+
+        .tag {
+            display: inline-block;
+            background: color-mix(in srgb, var(--mut) 14%, transparent);
+            border-radius: 999px;
+            padding: 1px 12px;
+            font-size: 13px;
+            margin: 0 6px 4px 0
+        }
+
+        label {
+            display: block;
+            font-weight: 600
+        }
+
+        .in,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 13px;
+            margin: 6px 0 12px;
+            font: inherit;
+            font-weight: 400;
+            color: var(--ink);
+            background: var(--card);
+            border: 1.5px solid var(--line);
+            border-radius: 10px
+        }
+
+        .btn {
+            font: inherit;
+            font-weight: 600;
+            padding: 9px 18px;
+            border-radius: 10px;
+            border: 2px solid var(--felt);
+            background: transparent;
+            color: var(--felt);
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block
+        }
+
+        .btn.pri {
+            background: var(--felt);
+            color: var(--pt)
+        }
+
+        .btn:disabled {
+            opacity: .4;
+            cursor: default
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 14px 0
+        }
+
+        .opt {
+            display: block;
+            width: 100%;
+            text-align: left;
+            font: inherit;
+            color: var(--ink);
+            background: var(--card);
+            border: 2px solid var(--line);
+            border-radius: 10px;
+            padding: 11px 14px;
+            margin: 8px 0;
+            cursor: pointer
+        }
+
+        .opt:hover:not(:disabled) {
+            border-color: var(--felt)
+        }
+
+        .opt.ok {
+            border-color: var(--ok)
+        }
+
+        .opt.bad {
+            border-color: var(--red)
+        }
+
+        .fb {
+            padding: 12px 14px;
+            border-radius: 10px;
+            border-left: 6px solid;
+            background: var(--card);
+            margin: 12px 0
+        }
+
+        .fb.ok {
+            border-color: var(--ok)
+        }
+
+        .fb.bad {
+            border-color: var(--red)
+        }
+
+        .bar {
+            height: 10px;
+            background: var(--line);
+            border-radius: 9px;
+            overflow: hidden;
+            margin: 8px 0
+        }
+
+        .bar i {
+            display: block;
+            height: 100%;
+            background: var(--felt)
+        }
+
+        .ck {
+            list-style: none;
+            padding: 0;
+            margin: 4px 0;
+            font-size: 14px
+        }
+
+        summary {
+            cursor: pointer
+        }
+
+        :focus-visible {
+            outline: 3px solid var(--felt);
+            outline-offset: 2px
+        }
+
+        #t {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+            background: var(--ink);
+            color: var(--bg2);
+            padding: 10px 18px;
+            border-radius: 10px;
+            display: none;
+            z-index: 9;
+            max-width: 92%
+        }
+
+        .cds {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 16px 0 4px
+        }
+
+        .cd {
+            width: 124px;
+            min-height: 176px;
+            padding: 12px 10px;
+            border-radius: 14px;
+            border: 2px solid hsl(var(--h) 50% 42%);
+            background: linear-gradient(160deg, hsl(var(--h) 75% 94%), hsl(var(--h) 65% 82%));
+            color: #1B2238;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 6px;
+            box-shadow: 0 3px 0 hsl(var(--h) 50% 42% / .35)
+        }
+
+        .ci {
+            font-size: 40px;
+            line-height: 1.1
+        }
+
+        .cd b {
+            font-size: 14px;
+            line-height: 1.3
+        }
+
+        .cd small {
+            font-size: 12px;
+            line-height: 1.35
+        }
+
+        @media(prefers-reduced-motion:no-preference) {
+            .cd {
+                transition: transform .15s
+            }
+
+            .cd:hover {
+                transform: translateY(-4px) rotate(-1.5deg)
+            }
+        }
+
+        .cv {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 14px 0;
+            min-height: 120px
+        }
+
+        .bb {
+            max-width: 88%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: var(--card);
+            overflow-wrap: anywhere
+        }
+
+        .bb.u {
+            align-self: flex-end;
+            background: var(--felt);
+            color: var(--pt);
+            border-color: var(--felt)
+        }
+
+        .bb.err {
+            border-color: var(--red)
+        }
+
+        .src {
+            margin-top: 6px
+        }
+
+        .chips {
+            margin: 6px 0 10px
+        }
+
+        .chips .tag {
+            border: 0;
+            cursor: pointer;
+            font-family: inherit;
+            color: var(--ink)
+        }
+
+        .ask {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start
+        }
+
+        .ask .in {
+            margin: 0;
+            flex: 1
+        }
+    </style>
 </head>
+
 <body>
-<div id="shell"><aside><button id="mb" aria-label="ย่อหรือขยายเมนู" onclick="document.body.classList.toggle('mini')"></button><nav id="nv"></nav><button class="out" aria-label="ออกจากระบบ" title="ออกจากระบบ" onclick="lo()"></button></aside>
-<div class="mainw"><div class="sbar"><span id="si"></span><input id="s" placeholder="ค้นหาบอร์ดเกม เช่น กฎ, ชื่อเกม..." aria-label="ค้นหาเกมและกฎ" oninput="sq()"></div><main id="app"></main></div></div>
-<div id="t" role="status"></div>
-<script>
-const SEED=[
-{id:'ek',n:'Exploding Kittens',e:'😼',pl:'2-5',t:'15',pub:1,hit:1,c:['ปาร์ตี้','กลยุทธ์'],lv:'เริ่มต้นง่าย',d:'เกมไพ่เอาตัวรอด จั่วไพ่ทีละใบและอย่าให้เจอแมวระเบิด Exploding Kitten',
-st:[['เป้าหมายของเกม','เอาตัวรอดจากการจั่วไพ่ Exploding Kitten ผู้เล่นคนสุดท้ายที่ยังไม่ระเบิดคือผู้ชนะ'],
-['เตรียมเกม','แจกไพ่ Defuse ให้ผู้เล่นคนละ 1 ใบ พร้อมไพ่เริ่มต้น แล้วใส่ Exploding Kitten ลงกองจั่วจำนวนเท่ากับจำนวนผู้เล่นลบ 1 ก่อนสับกอง',[['🧯','Defuse','คนละ 1 ใบ',140],['💣','Exploding Kitten','จำนวนผู้เล่น − 1 ใบ ใส่ลงกองจั่ว',0]]],
-['ตาของคุณ','เล่นไพ่กี่ใบก็ได้ หรือไม่เล่นเลยก็ได้ แล้วจบตาด้วยการจั่วไพ่ 1 ใบจากกองจั่ว'],
-['ไพ่แอ็กชัน','Attack จบตาโดยไม่จั่วและให้คนถัดไปเล่น 2 ตา, Skip จบตาโดยไม่จั่ว, Favor ให้เพื่อนเลือกไพ่ส่งให้คุณ 1 ใบ, Shuffle สับกองจั่ว, See the Future ดูไพ่บนสุด 3 ใบ',[['⚔️','Attack','จบตาไม่จั่ว คนถัดไปเล่น 2 ตา',0],['⏭️','Skip','จบตาไม่จั่ว',215],['🎁','Favor','เพื่อนเลือกไพ่ส่งให้คุณ',280],['🔀','Shuffle','สับกองจั่ว',175],['🔮','See the Future','ดูไพ่บนสุด 3 ใบ',245]]],
-['Nope และไพ่แมว','Nope ยกเลิกแอ็กชันของคนอื่นได้ ยกเว้น Exploding Kitten และ Defuse และ Nope ก็ถูก Nope ได้อีกที ส่วนไพ่แมวหน้าเหมือนกัน 2 ใบเล่นเป็นคู่เพื่อขโมยไพ่สุ่ม 1 ใบจากเพื่อน',[['🚫','Nope','ยกเลิกแอ็กชัน ยกเว้นระเบิดและ Defuse',350],['🐱','ไพ่แมวคู่','ขโมยไพ่สุ่ม 1 ใบ',45]]],
-['ระเบิดและ Defuse','ถ้าจั่วได้ Exploding Kitten ให้เล่น Defuse เพื่อรอด แล้วแอบใส่แมวกลับกองจั่วตรงตำแหน่งที่ต้องการ ถ้าไม่มี Defuse คุณระเบิดและออกจากเกม',[['💣','Exploding Kitten','จั่วเจอ = ระเบิด',0],['🧯','Defuse','รอดตาย แล้วซ่อนแมวกลับกอง',140]]]],
-sit:[{c:'คุณจั่วได้ Exploding Kitten และมี Defuse อยู่ในมือ คุณทำอะไรได้?',o:['ระเบิดและออกจากเกมทันที','เล่น Defuse แล้วแอบใส่แมวกลับเข้ากองจั่ว','ทิ้ง Exploding Kitten ลงกองทิ้ง'],a:1,w:'Defuse ช่วยให้รอด และคุณเลือกตำแหน่งใส่แมวกลับกองจั่วเองโดยไม่ให้ใครเห็น'},
-{c:'เพื่อนเล่น Attack ใส่คุณ คุณต้องทำอะไร?',o:['ไม่ต้องทำอะไร ตานี้ผ่านไป','ต้องเล่น 2 ตาติดกัน','เสียไพ่ในมือ 2 ใบ'],a:1,w:'Attack ทำให้ผู้เล่นคนถัดไปต้องเล่น 2 ตาติดกัน'},
-{c:'เพื่อนเล่น Favor ใส่คุณ ใครเป็นคนเลือกไพ่ที่ต้องส่งให้?',o:['เพื่อนที่เล่น Favor เลือกจากมือคุณ','คุณเลือกเอง','สุ่มจากมือคุณ'],a:1,w:'ผู้ที่ถูก Favor เป็นคนเลือกไพ่ที่จะส่งให้'}],
-qz:[{c:'ผู้เล่นแพ้เมื่อไร?',o:['จั่วได้ Exploding Kitten และไม่มี Defuse','เล่น Nope ไม่สำเร็จ','ไพ่ในมือหมด'],a:0,w:'ไม่มี Defuse ตอนจั่วได้ Exploding Kitten คือระเบิดและออกจากเกม'},
-{c:'โดยปกติ ตาหนึ่งจบด้วยอะไร?',o:['จั่วไพ่ 1 ใบ','ทิ้งไพ่ 1 ใบ','โหวต'],a:0,w:'จบตาด้วยการจั่วไพ่ 1 ใบ เว้นแต่เล่น Attack หรือ Skip'},
-{c:'Nope ใช้ยกเลิกอะไรไม่ได้?',o:['Attack','Exploding Kitten และ Defuse','Favor'],a:1,w:'Nope ยกเลิกได้ทุกแอ็กชัน ยกเว้น Exploding Kitten และ Defuse'}],
-r:[['Nope','ยกเลิกแอ็กชันของคนอื่นได้ ยกเว้น Exploding Kitten และ Defuse และ Nope ก็ถูก Nope ได้',[['🚫','Nope','ยกเลิกแอ็กชัน ยกเว้นระเบิดและ Defuse',350]]],['Attack','จบตาโดยไม่จั่ว แล้วให้ผู้เล่นคนถัดไปเล่น 2 ตาติดกัน',[['⚔️','Attack','จบตาไม่จั่ว คนถัดไปเล่น 2 ตา',0]]],['See the Future','แอบดูไพ่ 3 ใบบนสุดของกองจั่ว',[['🔮','See the Future','ดูไพ่บนสุด 3 ใบ',245]]],['Defuse','ใช้เมื่อจั่วได้ Exploding Kitten แล้วแอบใส่แมวกลับกองจั่วตรงที่ต้องการ',[['🧯','Defuse','รอดตาย แล้วซ่อนแมวกลับกอง',140]]],['ไพ่แมว','เล่นไพ่แมวหน้าเหมือนกัน 2 ใบเป็นคู่ เพื่อขโมยไพ่สุ่ม 1 ใบจากผู้เล่นที่เลือก',[['🐱','ไพ่แมวคู่','ขโมยไพ่สุ่ม 1 ใบ',45]]]]},
-{id:'ww',n:'Werewolf',e:'🐺',pl:'6-18',t:'30-60',pub:1,c:['ปาร์ตี้','ผจญภัย'],lv:'ปานกลาง',d:'เกมซ่อนบทบาท ชาวบ้านต้องหาหมาป่าที่แฝงตัวอยู่ให้เจอก่อนหมู่บ้านจะถูกกินหมด (ตามกติกามาตรฐาน)',
-st:[['เป้าหมายของเกม','ชาวบ้านต้องหาหมาป่าให้เจอและโหวตออกให้หมด ส่วนหมาป่าต้องกินชาวบ้านจนจำนวนเท่ากันหรือมากกว่า'],
-['เตรียมเกม','เลือกผู้ดำเนินเกม 1 คน แล้วแจกการ์ดบทบาทลับให้ผู้เล่นที่เหลือ เช่น ชาวบ้าน หมาป่า และผู้หยั่งรู้ ทุกคนดูได้เฉพาะบทบาทของตัวเอง',[['🧑‍🌾','ชาวบ้าน','ไม่มีพลังพิเศษ ใช้การสังเกตและโหวตหาหมาป่า',140],['🐺','หมาป่า','ตื่นตอนกลางคืนเพื่อเลือกกินชาวบ้าน',0],['🔮','ผู้หยั่งรู้','ดูว่าใครเป็นหมาป่า 1 คนต่อคืน',280],['🎙️','ผู้ดำเนินเกม','เล่าเรื่องและเรียกบทบาท ไม่ใช่ผู้เล่น',215]]],
-['ช่วงกลางคืน','ผู้ดำเนินเกมสั่งให้ทุกคนหลับตา แล้วเรียกบทบาทขึ้นมาทีละบท หมาป่าลืมตาเลือกเหยื่อ ผู้หยั่งรู้ลืมตาเลือกดูว่าใครเป็นหมาป่า',[['🌙','ทุกคนหลับตา','ผู้ดำเนินเกมเริ่มคืนใหม่',245],['🐺','หมาป่าลืมตา','เลือกเหยื่อ 1 คน',0],['🔮','ผู้หยั่งรู้ลืมตา','เลือกดูว่าใครเป็นหมาป่า',280]]],
-['ช่วงกลางวัน','ทุกคนลืมตา ผู้ดำเนินเกมประกาศคนที่ถูกกิน คนนั้นออกจากเกม จากนั้นทุกคนถกเถียงกันเพื่อหาตัวหมาป่า',[['☀️','ทุกคนลืมตา','ประกาศคนที่ถูกกิน',45],['💬','ถกเถียง','หาคนที่น่าสงสัย',175]]],
-['โหวต','ผู้เล่นโหวตคนที่สงสัยว่าเป็นหมาป่า คนที่ได้โหวตมากที่สุดออกจากเกม แล้วเข้าสู่กลางคืนรอบใหม่',[['🗳️','โหวต','คนที่ได้คะแนนมากสุดออกจากเกม',215]]],
-['จบเกม','ชาวบ้านชนะเมื่อกำจัดหมาป่าหมด หมาป่าชนะเมื่อมีจำนวนเท่ากับหรือมากกว่าชาวบ้านที่เหลือ',[['🧑‍🌾','ชาวบ้านชนะ','หมาป่าหมด',140],['🐺','หมาป่าชนะ','จำนวนเท่ากับหรือมากกว่าชาวบ้าน',0]]]],
-sit:[{c:'ตอนกลางคืน ผู้ดำเนินเกมสั่งให้ทุกคนหลับตา ใครได้ลืมตา?',o:['ทุกคนลืมตาได้','เฉพาะบทบาทที่ผู้ดำเนินเกมเรียก','เฉพาะชาวบ้าน'],a:1,w:'ผู้ดำเนินเกมเรียกทีละบทบาท และบทบาทอื่นต้องหลับตาต่อ'},
-{c:'เหลือผู้เล่น 4 คน เป็นหมาป่า 2 คนและชาวบ้าน 2 คน ใครชนะ?',o:['ชาวบ้านชนะ','หมาป่าชนะ','เล่นต่ออีกรอบ'],a:1,w:'หมาป่ามีจำนวนเท่ากับชาวบ้าน จึงชนะ'}],
-qz:[{c:'ใครไม่ได้เป็นผู้เล่นในฝ่ายใด?',o:['ผู้ดำเนินเกม','ผู้หยั่งรู้','ชาวบ้าน'],a:0,w:'ผู้ดำเนินเกมทำหน้าที่เล่าเรื่องและเรียกบทบาท ไม่ได้เล่นในฝ่ายใด'},
-{c:'ช่วงกลางวันทำอะไร?',o:['ถกเถียงและโหวตหาคนที่สงสัย','หมาป่าเลือกเหยื่อ','แจกบทบาทใหม่'],a:0,w:'กลางวันทุกคนลืมตา ถกเถียง แล้วโหวตหาหมาป่า'},
-{c:'ชาวบ้านชนะเมื่อไร?',o:['กำจัดหมาป่าหมด','ผ่านไป 3 คืน','ผู้หยั่งรู้รอดชีวิต'],a:0,w:'ชาวบ้านชนะเมื่อหมาป่าถูกกำจัดครบทุกตัว'}],
-r:[['ผู้ดำเนินเกม','ไม่ได้เป็นผู้เล่นในฝ่ายใด ทำหน้าที่เล่าเรื่อง เรียกบทบาท และนับคะแนนโหวต',[['🎙️','ผู้ดำเนินเกม','เล่าเรื่อง เรียกบทบาท นับโหวต',215]]],['หมาป่า','ลืมตาตอนกลางคืนเพื่อเลือกกินชาวบ้านหนึ่งคน และต้องปิดบังตัวตนตอนกลางวัน',[['🐺','หมาป่า','ตื่นตอนกลางคืนเพื่อเลือกกินชาวบ้าน',0]]],['ผู้หยั่งรู้ (Seer)','ตอนกลางคืนเลือกดูผู้เล่น 1 คนว่าเป็นหมาป่าหรือไม่',[['🔮','ผู้หยั่งรู้','ดูว่าใครเป็นหมาป่า 1 คนต่อคืน',280]]],['ชาวบ้าน','ไม่มีพลังพิเศษ ใช้การสังเกตและการโหวตเพื่อหาหมาป่า',[['🧑‍🌾','ชาวบ้าน','ไม่มีพลังพิเศษ ใช้การสังเกตและโหวตหาหมาป่า',140]]],['เงื่อนไขชนะ','ชาวบ้านชนะเมื่อหมาป่าหมด หมาป่าชนะเมื่อมีจำนวนเท่ากับหรือมากกว่าชาวบ้าน',[['🧑‍🌾','ชาวบ้านชนะ','หมาป่าหมด',140],['🐺','หมาป่าชนะ','จำนวนเท่ากับหรือมากกว่าชาวบ้าน',0]]],['บทบาทเสริม','บางฉบับมีบทบาทเพิ่ม เช่น หมอที่ปกป้องผู้เล่นหนึ่งคนในแต่ละคืน ให้ตรวจกติกาในกล่องที่คุณใช้',[['🩺','หมอ (บางฉบับ)','ปกป้องผู้เล่น 1 คนต่อคืน',140]]]]},
-{id:'mm',n:'Mogel Motte',e:'🦋',pl:'3-5',t:'30',pub:1,c:['ครอบครัว','ปาร์ตี้'],lv:'เริ่มต้นง่าย',d:'เกมไพ่ทิ้งไพ่ให้หมดมือก่อนใคร และต้องแอบโกงโดยไม่ให้ผู้เล่นที่เป็นยามจับได้',
-st:[['เป้าหมายของเกม','ทิ้งไพ่ในมือให้หมดก่อนคนอื่น โดยแอบโกงทิ้งไพ่ให้ได้ แต่อย่าให้ผู้เล่นที่เป็นยามจับได้'],
-['เตรียมเกม','แจกไพ่คนละ 8 ใบ ผู้เล่นอายุมากที่สุดรับแมลงยาม (Guard Bug) วางไว้บนโต๊ะตลอดเกม แล้วเปิดไพ่ 1 ใบเพื่อเริ่มกองทิ้ง',[['🃏','ไพ่ในมือ','คนละ 8 ใบ',215],['🪲','แมลงยาม','ฟ้องคนโกงได้เฉพาะผู้ถือ',140]]],
-['วิธีลงไพ่','ไพ่มีเลข 1-5 ลงไพ่ 1 ใบที่เลขมากกว่าหรือน้อยกว่าไพ่บนสุดอยู่ 1 พอดี เลข 1 กับ 5 ต่อกันได้ ถ้าลงไม่ได้ให้จั่ว 1 ใบและจบตา',[['1','','ต่อได้กับ 5 และ 2',0],['2','','ต่อได้กับ 1 และ 3',45],['3','','ต่อได้กับ 2 และ 4',140],['4','','ต่อได้กับ 3 และ 5',215],['5','','ต่อได้กับ 4 และ 1',280]]],
-['การโกง','คุณแอบทิ้งไพ่ได้ เช่น หย่อนลงพื้นหรือซ่อนในแขนเสื้อ แต่ต้องถือมือไว้เหนือโต๊ะตลอด ทำทีละ 1 ใบเท่านั้น และห้ามโกงทิ้งไพ่ใบสุดท้าย',[['🫣','โกงได้ทีละ 1 ใบ','มือต้องอยู่เหนือโต๊ะ',25],['🚫','ใบสุดท้ายห้ามโกง','ต้องลงไพ่จริง',0]]],
-['ยามจับโกง','เฉพาะผู้เล่นที่ถือแมลงยามเท่านั้นที่ฟ้องคนโกงได้ ระหว่างตัดสินห้ามใครโกง และยามต้องเล่นตามกติกา ห้ามโกงเอง',[['🪲','แมลงยาม','ฟ้องคนโกงได้เฉพาะผู้ถือ',140]]],
-['ไพ่แมลงสาบ','เมื่อมีคนลงไพ่แมลงสาบ (Cockroach) ทุกคนแย่งกันลงไพ่เลขเดียวกันทับ ผู้ที่เร็วที่สุดเท่านั้นได้ลงไพ่',[['🪳','Cockroach','ทุกคนแย่งลงเลขเดียวกันทับ',25],['⚡','คนเร็วที่สุด','ได้ลงไพ่ใบเดียว',45]]],
-['จบรอบและคะแนน','เมื่อมีผู้เล่นไพ่หมดมือ รอบจบ คนอื่นนับคะแนนไพ่ในมือ ไพ่ผีเสื้อ (Cheating Moth) ใบละ 10, ไพ่พิเศษ 5, ไพ่เลข 1 เล่นรอบเท่าจำนวนผู้เล่น ใครคะแนนน้อยที่สุดชนะ',[['🦋','Cheating Moth','10 คะแนน',280],['⭐','ไพ่พิเศษ','5 คะแนน',45],['🔢','ไพ่เลข','1 คะแนน',215]]]],
-sit:[{c:'คุณเหลือไพ่ 1 ใบ และอยากแอบโกงทิ้งใบสุดท้ายลงใต้โต๊ะ ทำได้ไหม?',o:['ทำได้ ถ้ายามไม่เห็น','ทำไม่ได้','ทำได้ ถ้าเป็นไพ่เลข 1'],a:1,w:'ห้ามโกงทิ้งไพ่ใบสุดท้าย'},
-{c:'ไพ่บนกองทิ้งเป็นเลข 5 คุณลงไพ่เลขอะไรได้?',o:['เลข 4 หรือ 1','เลข 3 หรือ 5','เลขอะไรก็ได้'],a:0,w:'ลงเลขมากหรือน้อยกว่า 1 พอดี และเลข 5 ต่อกับเลข 1 ได้'},
-{c:'คุณถือแมลงยามอยู่ คุณแอบโกงทิ้งไพ่ได้ไหม?',o:['ได้ ถ้ามั่นใจว่าไม่มีใครเห็น','ไม่ได้ ยามห้ามโกง'],a:1,w:'ผู้เล่นที่เป็นยามไม่ได้รับอนุญาตให้โกง'}],
-qz:[{c:'เมื่อลงไพ่ไม่ได้ ต้องทำอย่างไร?',o:['จั่ว 1 ใบและจบตา','ข้ามตาโดยไม่ต้องทำอะไร','จั่ว 2 ใบ'],a:0,w:'ถ้าลงไพ่ไม่ได้ ให้จั่ว 1 ใบและจบตา'},
-{c:'ใครฟ้องคนโกงได้?',o:['ทุกคน','ผู้เล่นที่ถือแมลงยามเท่านั้น','ผู้เล่นที่อายุน้อยที่สุด'],a:1,w:'เฉพาะผู้ที่ถือแมลงยามเท่านั้นที่ฟ้องได้'},
-{c:'ไพ่ผีเสื้อ (Cheating Moth) ที่ค้างในมือตอนจบรอบ ได้กี่คะแนน?',o:['1 คะแนน','5 คะแนน','10 คะแนน'],a:2,w:'ผีเสื้อใบละ 10 คะแนน และคะแนนน้อยที่สุดคือผู้ชนะ'}],
-r:[['ลงไพ่','ต้องลงเลขมากหรือน้อยกว่าไพ่บนสุด 1 พอดี และเลข 5 ต่อกับเลข 1 ได้',[['1','','ต่อได้กับ 5 และ 2',0],['2','','ต่อได้กับ 1 และ 3',45],['3','','ต่อได้กับ 2 และ 4',140],['4','','ต่อได้กับ 3 และ 5',215],['5','','ต่อได้กับ 4 และ 1',280]]],['การโกง','ทิ้งไพ่แอบๆ ได้ทีละ 1 ใบ ต้องถือมือเหนือโต๊ะ และห้ามโกงทิ้งไพ่ใบสุดท้าย',[['🫣','โกงได้ทีละ 1 ใบ','มือต้องอยู่เหนือโต๊ะ',25],['🚫','ใบสุดท้ายห้ามโกง','ต้องลงไพ่จริง',0]]],['แมลงยาม (Guard Bug)','ผู้ถือเท่านั้นที่ฟ้องคนโกงได้ ระหว่างตัดสินห้ามใครโกง และยามโกงเองไม่ได้',[['🪲','แมลงยาม','ฟ้องคนโกงได้เฉพาะผู้ถือ',140]]],['แมลงสาบ (Cockroach)','ทุกคนแย่งลงไพ่เลขเดียวกันทับ ผู้ที่เร็วที่สุดได้ลง',[['🪳','Cockroach','ทุกคนแย่งลงเลขเดียวกันทับ',25]]],['คะแนน','ผีเสื้อ 10, ไพ่พิเศษ 5, ไพ่เลข 1 ต่อใบ เล่นเท่าจำนวนผู้เล่นรอบ คะแนนน้อยที่สุดชนะ',[['🦋','Cheating Moth','10 คะแนน',280],['⭐','ไพ่พิเศษ','5 คะแนน',45],['🔢','ไพ่เลข','1 คะแนน',215]]]]},
-{id:'tb',n:'คำต้องห้าม',e:'🤐',pl:'3+',t:'15-30',pub:1,c:['ปาร์ตี้','ครอบครัว'],lv:'เริ่มต้นง่าย',d:'ปาร์ตี้เกมจากเทพลีลา ทุกคนมีคำต้องห้ามแปะหน้าผาก ห้ามพูดคำของตัวเอง แต่ต้องหาทางให้เพื่อนพูดคำของเขา',
-st:[['เป้าหมายของเกม','พยายามไม่พูดคำต้องห้ามของตัวเอง และหาวิธีให้เพื่อนพูดคำต้องห้ามของเขาออกมา'],
-['เตรียมเกม','ผู้เล่นทุกคนได้รับคำต้องห้ามของตัวเอง แปะไว้บนหน้าผาก คนอื่นมองเห็นแต่เจ้าตัวมองไม่เห็น',[['🤐','คำของคุณ','แปะหน้าผาก คุณมองไม่เห็น',350],['👀','คำของเพื่อน','คุณมองเห็น แต่เจ้าตัวไม่เห็น',175]]],
-['ระหว่างเล่น','ทุกคนคุยกันตามปกติ คุณรู้คำของเพื่อนแต่ไม่รู้คำของตัวเอง ชวนเพื่อนคุยให้เขาหลุดพูดคำนั้น และระวังอย่าพูดคำของตัวเอง',[['🗣️','คุยตามปกติ','ห้ามพูดคำของตัวเอง',215],['🎯','ชวนเพื่อนหลุด','ให้เพื่อนพูดคำของเขา',45]]],
-['เคล็ดลับการชวนคุย','อย่าบอกคำตรงๆ ให้ชวนคุยเรื่องที่เกี่ยวข้องกับคำนั้น เพื่อให้เพื่อนเป็นฝ่ายพูดออกมาเอง'],
-['เมื่อมีคนพลาด','ผู้เล่นที่พูดคำต้องห้ามของตัวเองออกมาถือว่าพลาด บทลงโทษและการนับคะแนนให้ดูตามกติกาในกล่องเกมที่คุณใช้']],
-sit:[{c:'คุณมองเห็นคำต้องห้ามบนหน้าผากของตัวเองได้ไหม?',o:['ได้','ไม่ได้ คนอื่นเห็นแต่คุณไม่เห็น'],a:1,w:'คำแปะบนหน้าผาก คนอื่นจึงเห็นแต่เจ้าของคำมองไม่เห็น'},
-{c:'คุณอยากให้เพื่อนพูดคำต้องห้ามของเขา ควรทำอย่างไร?',o:['ถามชี้นำให้ตรงตัวที่สุด','ชวนคุยเรื่องที่เกี่ยวข้องเพื่อให้เขาใช้คำนั้นเอง','บอกคำนั้นให้เพื่อนฟัง'],a:1,w:'เป้าหมายคือให้เพื่อนเป็นฝ่ายพูดคำนั้นเอง ไม่ใช่เราพูดแทน'}],
-qz:[{c:'คำต้องห้ามของคุณอยู่ที่ไหน?',o:['บนหน้าผากของคุณ','ในมือของคุณ','บนโต๊ะ'],a:0,w:'แปะบนหน้าผาก คนอื่นจึงเห็นแต่คุณไม่เห็น'},
-{c:'เป้าหมายหลักของเกมคืออะไร?',o:['ไม่พูดคำของตัวเอง และทำให้เพื่อนพูดคำของเขา','เดาคำของตัวเองให้ถูก','ซ่อนคำของตัวเองไว้ในมือ'],a:0,w:'ไม่พูดคำของตัวเอง และหาทางให้เพื่อนพูดคำของเขาออกมา'}],
-r:[['คำต้องห้าม','คำที่แปะบนหน้าผากของคุณ ห้ามพูดออกมา และคุณมองไม่เห็น',[['🤐','คำต้องห้าม','ห้ามพูด และคุณมองไม่เห็น',350]]],['การชวนคุย','ชวนเพื่อนคุยหัวข้อที่เกี่ยวข้อง เพื่อให้เพื่อนพูดคำของเขาเอง'],['ภาคเสริม','มีชุดคำศัพท์เพิ่มเติมจำหน่ายแยกต่างหาก']]},
-{id:'sf',n:'Spyfall',e:'🕵️',pl:'3-8',t:'8-10',pub:1,c:['ผจญภัย','กลยุทธ์'],lv:'ปานกลาง',d:'เกมสายลับ ทุกคนรู้สถานที่ยกเว้นสายลับ ผู้เล่นต้องถามตอบเพื่อจับสายลับ ส่วนสายลับต้องเดาสถานที่ให้ได้',
-st:[['เป้าหมายของเกม','ผู้เล่นทั่วไปต้องหาสายลับให้เจอ ส่วนสายลับต้องเดาสถานที่ให้ถูก หรือรอดจนหมดเวลาโดยไม่ถูกจับได้'],
-['แจกการ์ด','ทุกคนได้การ์ดสถานที่เดียวกันพร้อมบทบาทของตัวเอง ยกเว้น 1 คนที่ได้การ์ดสายลับ ซึ่งไม่รู้ว่าสถานที่คืออะไร',[['📍','การ์ดสถานที่','สถานที่ + บทบาท เช่น ชายหาด · ไลฟ์การ์ด',175],['🕵️','การ์ดสายลับ','ไม่มีข้อมูลสถานที่',0]]],
-['ถามตอบ','เริ่มจับเวลา 8 นาที ผลัดกันถามคำถามเกี่ยวกับสถานที่ ผู้ถูกถามตอบแล้วเป็นคนถามต่อ ควรถามให้ไม่เผยสถานที่ชัดเกินไป',[['❓','ถาม','ถามเกี่ยวกับสถานที่',215],['💬','ตอบ','แล้วผู้ตอบเป็นคนถามต่อ',140]]],
-['สายลับเดาสถานที่','สายลับหยุดเกมได้ระหว่างที่นาฬิกาเดินอยู่ เปิดการ์ดแล้วเดาสถานที่ ถ้าเดาถูกสายลับชนะ',[['📍','สายลับเดาสถานที่','หยุดเกม เปิดตัว แล้วเดา',280]]],
-['กล่าวหา','ผู้เล่นทั่วไปหยุดเกมเพื่อกล่าวหาใครก็ได้ว่าเป็นสายลับ คนอื่นโหวต โดยผู้ถูกกล่าวหาไม่โหวต ถ้าเป็นเอกฉันท์คนนั้นเปิดการ์ด ถ้าไม่เป็นเอกฉันท์ให้จับเวลาต่อ',[['☝️','กล่าวหา','ชี้คนที่สงสัย',45],['🗳️','โหวตเอกฉันท์','ผู้ถูกกล่าวหาไม่โหวต',215]]],
-['หมดเวลา','เมื่อครบ 8 นาที ผู้เล่นผลัดกันกล่าวหาโดยเริ่มจากคนแจกไพ่ ถ้าไม่มีใครกล่าวหาได้เอกฉันท์เลย สายลับชนะ',[['⏱️','ครบ 8 นาที','ผลัดกันกล่าวหา',45]]],
-['ผลแพ้ชนะ','ผู้เล่นทั่วไปชนะเมื่อจับสายลับได้ สายลับชนะเมื่อเดาสถานที่ถูก ถูกกล่าวหาผิดคนด้วยเสียงเอกฉันท์ หรือไม่มีใครกล่าวหาเอกฉันท์สำเร็จ',[['✅','จับสายลับถูก','ผู้เล่นทั่วไปชนะ',140],['❌','กล่าวหาผิดคน','สายลับชนะ',0],['📍','สายลับเดาถูก','สายลับชนะ',280]]]],
-sit:[{c:'ทุกคนโหวตเอกฉันท์กล่าวหาเพื่อนคนหนึ่ง แต่เขาไม่ใช่สายลับ ใครชนะ?',o:['ผู้เล่นทั่วไปชนะ','สายลับชนะ','เล่นต่อ'],a:1,w:'ถ้าเปิดการ์ดแล้วเป็นผู้เล่นทั่วไป สายลับชนะ'},
-{c:'คุณเป็นสายลับและเดาสถานที่ได้แล้ว ทำอะไรได้?',o:['รอจนหมดเวลาเท่านั้น','หยุดเกม เปิดตัว แล้วเดาสถานที่','ถามเพื่อนว่าสถานที่คืออะไร'],a:1,w:'สายลับหยุดเกมแล้วเดาสถานที่ได้ ถ้าถูกชนะทันที'}],
-qz:[{c:'ใครไม่รู้สถานที่?',o:['สายลับ','ผู้เล่นทุกคน','คนแจกไพ่'],a:0,w:'สายลับได้การ์ดที่ไม่มีข้อมูลสถานที่'},
-{c:'การโหวตกล่าวหาต้องได้เสียงเท่าไรจึงเปิดการ์ด?',o:['เกินครึ่ง','เอกฉันท์ โดยไม่นับผู้ถูกกล่าวหา','1 เสียง'],a:1,w:'ต้องเอกฉันท์ และผู้ถูกกล่าวหาไม่ได้โหวต'},
-{c:'รอบหนึ่งจับเวลากี่นาที?',o:['3 นาที','8 นาที','20 นาที'],a:1,w:'กติกามาตรฐานจับเวลา 8 นาทีต่อรอบ'}],
-r:[['การ์ดสถานที่','บอกสถานที่และบทบาทของคุณ ส่วนสายลับได้การ์ดที่ไม่มีข้อมูล',[['📍','การ์ดสถานที่','สถานที่ + บทบาท เช่น ชายหาด · ไลฟ์การ์ด',175],['🕵️','การ์ดสายลับ','ไม่มีข้อมูลสถานที่',0]]],['คำถาม','ถามเกี่ยวกับสถานที่ ไม่ควรเผยรายละเอียดจนสายลับเดาได้ง่าย'],['การกล่าวหา','ต้องโหวตเอกฉันท์ โดยผู้ถูกกล่าวหาไม่ได้โหวต',[['🗳️','โหวตเอกฉันท์','ผู้ถูกกล่าวหาไม่โหวต',215]]],['สายลับเดาสถานที่','หยุดเกม เปิดตัว แล้วเดาสถานที่ ถ้าถูกชนะทันที',[['📍','สายลับเดาสถานที่','หยุดเกม เปิดตัว แล้วเดา',280]]],['หมดเวลา','ผลัดกันกล่าวหาโดยเริ่มจากคนแจกไพ่ ถ้าไม่มีใครได้เอกฉันท์ สายลับชนะ',[['⏱️','ครบ 8 นาที','ผลัดกันกล่าวหา',45]]]]}];
-const $=s=>document.querySelector(s),A=$('#app');
-const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let S={p:{},q:{},g:SEED,ad:0,u:'ผู้เล่น',h:[],fb:[],cv:{},rt:[],lg:'',cfg:{url:'http://localhost:11434',m:'llama3.2',demo:0}},T={},P={},Q={};
-try{const x=JSON.parse(localStorage.getItem('bgt9'));if(x&&x.g)S=x}catch(e){}
-const save=()=>{try{localStorage.setItem('bgt9',JSON.stringify(S))}catch(e){}};
-const G1=id=>S.g.find(g=>g.id==id),pub=()=>S.g.filter(g=>g.pub);
-const dn=g=>(S.p[g.id]||[]).length,pc=g=>g.st.length?Math.round(dn(g)/g.st.length*100):0;
-const msg=m=>{const t=$('#t');t.textContent=m;t.style.display='block';clearTimeout(msg.h);msg.h=setTimeout(()=>t.style.display='none',2800)};
-const app=h=>{A.innerHTML=h};
-const back=id=>`<a class="btn" href="#/game/${id}">← กลับหน้าเกม</a>`;
-const V=i=>$('#'+i).value.trim();
+    <div id="shell">
+        <aside><button id="mb" aria-label="ย่อหรือขยายเมนู" onclick="document.body.classList.toggle('mini')"></button>
+            <nav id="nv"></nav><button class="out" aria-label="ออกจากระบบ" title="ออกจากระบบ" onclick="lo()"></button>
+        </aside>
+        <div class="mainw">
+            <div class="sbar"><span id="si"></span><input id="s" placeholder="ค้นหาบอร์ดเกม เช่น กฎ, ชื่อเกม..."
+                    aria-label="ค้นหาเกมและกฎ" oninput="sq()"></div>
+            <main id="app"></main>
+        </div>
+    </div>
+    <div id="t" role="status"></div>
+    <script>
+        const SEED = [
+            {
+                id: 'ek', n: 'Exploding Kittens', e: '😼', pl: '2-5', t: '15', pub: 1, hit: 1, c: ['ปาร์ตี้', 'กลยุทธ์'], lv: 'เริ่มต้นง่าย', d: 'เกมไพ่เอาตัวรอด จั่วไพ่ทีละใบและอย่าให้เจอแมวระเบิด Exploding Kitten',
+                st: [['เป้าหมายของเกม', 'เอาตัวรอดจากการจั่วไพ่ Exploding Kitten ผู้เล่นคนสุดท้ายที่ยังไม่ระเบิดคือผู้ชนะ'],
+                ['เตรียมเกม', 'แจกไพ่ Defuse ให้ผู้เล่นคนละ 1 ใบ พร้อมไพ่เริ่มต้น แล้วใส่ Exploding Kitten ลงกองจั่วจำนวนเท่ากับจำนวนผู้เล่นลบ 1 ก่อนสับกอง', [['🧯', 'Defuse', 'คนละ 1 ใบ', 140], ['💣', 'Exploding Kitten', 'จำนวนผู้เล่น − 1 ใบ ใส่ลงกองจั่ว', 0]]],
+                ['ตาของคุณ', 'เล่นไพ่กี่ใบก็ได้ หรือไม่เล่นเลยก็ได้ แล้วจบตาด้วยการจั่วไพ่ 1 ใบจากกองจั่ว'],
+                ['ไพ่แอ็กชัน', 'Attack จบตาโดยไม่จั่วและให้คนถัดไปเล่น 2 ตา, Skip จบตาโดยไม่จั่ว, Favor ให้เพื่อนเลือกไพ่ส่งให้คุณ 1 ใบ, Shuffle สับกองจั่ว, See the Future ดูไพ่บนสุด 3 ใบ', [['⚔️', 'Attack', 'จบตาไม่จั่ว คนถัดไปเล่น 2 ตา', 0], ['⏭️', 'Skip', 'จบตาไม่จั่ว', 215], ['🎁', 'Favor', 'เพื่อนเลือกไพ่ส่งให้คุณ', 280], ['🔀', 'Shuffle', 'สับกองจั่ว', 175], ['🔮', 'See the Future', 'ดูไพ่บนสุด 3 ใบ', 245]]],
+                ['Nope และไพ่แมว', 'Nope ยกเลิกแอ็กชันของคนอื่นได้ ยกเว้น Exploding Kitten และ Defuse และ Nope ก็ถูก Nope ได้อีกที ส่วนไพ่แมวหน้าเหมือนกัน 2 ใบเล่นเป็นคู่เพื่อขโมยไพ่สุ่ม 1 ใบจากเพื่อน', [['🚫', 'Nope', 'ยกเลิกแอ็กชัน ยกเว้นระเบิดและ Defuse', 350], ['🐱', 'ไพ่แมวคู่', 'ขโมยไพ่สุ่ม 1 ใบ', 45]]],
+                ['ระเบิดและ Defuse', 'ถ้าจั่วได้ Exploding Kitten ให้เล่น Defuse เพื่อรอด แล้วแอบใส่แมวกลับกองจั่วตรงตำแหน่งที่ต้องการ ถ้าไม่มี Defuse คุณระเบิดและออกจากเกม', [['💣', 'Exploding Kitten', 'จั่วเจอ = ระเบิด', 0], ['🧯', 'Defuse', 'รอดตาย แล้วซ่อนแมวกลับกอง', 140]]]],
+                sit: [{ c: 'คุณจั่วได้ Exploding Kitten และมี Defuse อยู่ในมือ คุณทำอะไรได้?', o: ['ระเบิดและออกจากเกมทันที', 'เล่น Defuse แล้วแอบใส่แมวกลับเข้ากองจั่ว', 'ทิ้ง Exploding Kitten ลงกองทิ้ง'], a: 1, w: 'Defuse ช่วยให้รอด และคุณเลือกตำแหน่งใส่แมวกลับกองจั่วเองโดยไม่ให้ใครเห็น' },
+                { c: 'เพื่อนเล่น Attack ใส่คุณ คุณต้องทำอะไร?', o: ['ไม่ต้องทำอะไร ตานี้ผ่านไป', 'ต้องเล่น 2 ตาติดกัน', 'เสียไพ่ในมือ 2 ใบ'], a: 1, w: 'Attack ทำให้ผู้เล่นคนถัดไปต้องเล่น 2 ตาติดกัน' },
+                { c: 'เพื่อนเล่น Favor ใส่คุณ ใครเป็นคนเลือกไพ่ที่ต้องส่งให้?', o: ['เพื่อนที่เล่น Favor เลือกจากมือคุณ', 'คุณเลือกเอง', 'สุ่มจากมือคุณ'], a: 1, w: 'ผู้ที่ถูก Favor เป็นคนเลือกไพ่ที่จะส่งให้' }],
+                qz: [{ c: 'ผู้เล่นแพ้เมื่อไร?', o: ['จั่วได้ Exploding Kitten และไม่มี Defuse', 'เล่น Nope ไม่สำเร็จ', 'ไพ่ในมือหมด'], a: 0, w: 'ไม่มี Defuse ตอนจั่วได้ Exploding Kitten คือระเบิดและออกจากเกม' },
+                { c: 'โดยปกติ ตาหนึ่งจบด้วยอะไร?', o: ['จั่วไพ่ 1 ใบ', 'ทิ้งไพ่ 1 ใบ', 'โหวต'], a: 0, w: 'จบตาด้วยการจั่วไพ่ 1 ใบ เว้นแต่เล่น Attack หรือ Skip' },
+                { c: 'Nope ใช้ยกเลิกอะไรไม่ได้?', o: ['Attack', 'Exploding Kitten และ Defuse', 'Favor'], a: 1, w: 'Nope ยกเลิกได้ทุกแอ็กชัน ยกเว้น Exploding Kitten และ Defuse' }],
+                r: [['Nope', 'ยกเลิกแอ็กชันของคนอื่นได้ ยกเว้น Exploding Kitten และ Defuse และ Nope ก็ถูก Nope ได้', [['🚫', 'Nope', 'ยกเลิกแอ็กชัน ยกเว้นระเบิดและ Defuse', 350]]], ['Attack', 'จบตาโดยไม่จั่ว แล้วให้ผู้เล่นคนถัดไปเล่น 2 ตาติดกัน', [['⚔️', 'Attack', 'จบตาไม่จั่ว คนถัดไปเล่น 2 ตา', 0]]], ['See the Future', 'แอบดูไพ่ 3 ใบบนสุดของกองจั่ว', [['🔮', 'See the Future', 'ดูไพ่บนสุด 3 ใบ', 245]]], ['Defuse', 'ใช้เมื่อจั่วได้ Exploding Kitten แล้วแอบใส่แมวกลับกองจั่วตรงที่ต้องการ', [['🧯', 'Defuse', 'รอดตาย แล้วซ่อนแมวกลับกอง', 140]]], ['ไพ่แมว', 'เล่นไพ่แมวหน้าเหมือนกัน 2 ใบเป็นคู่ เพื่อขโมยไพ่สุ่ม 1 ใบจากผู้เล่นที่เลือก', [['🐱', 'ไพ่แมวคู่', 'ขโมยไพ่สุ่ม 1 ใบ', 45]]]]
+            },
+            {
+                id: 'ww', n: 'Werewolf', e: '🐺', pl: '6-18', t: '30-60', pub: 1, c: ['ปาร์ตี้', 'ผจญภัย'], lv: 'ปานกลาง', d: 'เกมซ่อนบทบาท ชาวบ้านต้องหาหมาป่าที่แฝงตัวอยู่ให้เจอก่อนหมู่บ้านจะถูกกินหมด (ตามกติกามาตรฐาน)',
+                st: [['เป้าหมายของเกม', 'ชาวบ้านต้องหาหมาป่าให้เจอและโหวตออกให้หมด ส่วนหมาป่าต้องกินชาวบ้านจนจำนวนเท่ากันหรือมากกว่า'],
+                ['เตรียมเกม', 'เลือกผู้ดำเนินเกม 1 คน แล้วแจกการ์ดบทบาทลับให้ผู้เล่นที่เหลือ เช่น ชาวบ้าน หมาป่า และผู้หยั่งรู้ ทุกคนดูได้เฉพาะบทบาทของตัวเอง', [['🧑‍🌾', 'ชาวบ้าน', 'ไม่มีพลังพิเศษ ใช้การสังเกตและโหวตหาหมาป่า', 140], ['🐺', 'หมาป่า', 'ตื่นตอนกลางคืนเพื่อเลือกกินชาวบ้าน', 0], ['🔮', 'ผู้หยั่งรู้', 'ดูว่าใครเป็นหมาป่า 1 คนต่อคืน', 280], ['🎙️', 'ผู้ดำเนินเกม', 'เล่าเรื่องและเรียกบทบาท ไม่ใช่ผู้เล่น', 215]]],
+                ['ช่วงกลางคืน', 'ผู้ดำเนินเกมสั่งให้ทุกคนหลับตา แล้วเรียกบทบาทขึ้นมาทีละบท หมาป่าลืมตาเลือกเหยื่อ ผู้หยั่งรู้ลืมตาเลือกดูว่าใครเป็นหมาป่า', [['🌙', 'ทุกคนหลับตา', 'ผู้ดำเนินเกมเริ่มคืนใหม่', 245], ['🐺', 'หมาป่าลืมตา', 'เลือกเหยื่อ 1 คน', 0], ['🔮', 'ผู้หยั่งรู้ลืมตา', 'เลือกดูว่าใครเป็นหมาป่า', 280]]],
+                ['ช่วงกลางวัน', 'ทุกคนลืมตา ผู้ดำเนินเกมประกาศคนที่ถูกกิน คนนั้นออกจากเกม จากนั้นทุกคนถกเถียงกันเพื่อหาตัวหมาป่า', [['☀️', 'ทุกคนลืมตา', 'ประกาศคนที่ถูกกิน', 45], ['💬', 'ถกเถียง', 'หาคนที่น่าสงสัย', 175]]],
+                ['โหวต', 'ผู้เล่นโหวตคนที่สงสัยว่าเป็นหมาป่า คนที่ได้โหวตมากที่สุดออกจากเกม แล้วเข้าสู่กลางคืนรอบใหม่', [['🗳️', 'โหวต', 'คนที่ได้คะแนนมากสุดออกจากเกม', 215]]],
+                ['จบเกม', 'ชาวบ้านชนะเมื่อกำจัดหมาป่าหมด หมาป่าชนะเมื่อมีจำนวนเท่ากับหรือมากกว่าชาวบ้านที่เหลือ', [['🧑‍🌾', 'ชาวบ้านชนะ', 'หมาป่าหมด', 140], ['🐺', 'หมาป่าชนะ', 'จำนวนเท่ากับหรือมากกว่าชาวบ้าน', 0]]]],
+                sit: [{ c: 'ตอนกลางคืน ผู้ดำเนินเกมสั่งให้ทุกคนหลับตา ใครได้ลืมตา?', o: ['ทุกคนลืมตาได้', 'เฉพาะบทบาทที่ผู้ดำเนินเกมเรียก', 'เฉพาะชาวบ้าน'], a: 1, w: 'ผู้ดำเนินเกมเรียกทีละบทบาท และบทบาทอื่นต้องหลับตาต่อ' },
+                { c: 'เหลือผู้เล่น 4 คน เป็นหมาป่า 2 คนและชาวบ้าน 2 คน ใครชนะ?', o: ['ชาวบ้านชนะ', 'หมาป่าชนะ', 'เล่นต่ออีกรอบ'], a: 1, w: 'หมาป่ามีจำนวนเท่ากับชาวบ้าน จึงชนะ' }],
+                qz: [{ c: 'ใครไม่ได้เป็นผู้เล่นในฝ่ายใด?', o: ['ผู้ดำเนินเกม', 'ผู้หยั่งรู้', 'ชาวบ้าน'], a: 0, w: 'ผู้ดำเนินเกมทำหน้าที่เล่าเรื่องและเรียกบทบาท ไม่ได้เล่นในฝ่ายใด' },
+                { c: 'ช่วงกลางวันทำอะไร?', o: ['ถกเถียงและโหวตหาคนที่สงสัย', 'หมาป่าเลือกเหยื่อ', 'แจกบทบาทใหม่'], a: 0, w: 'กลางวันทุกคนลืมตา ถกเถียง แล้วโหวตหาหมาป่า' },
+                { c: 'ชาวบ้านชนะเมื่อไร?', o: ['กำจัดหมาป่าหมด', 'ผ่านไป 3 คืน', 'ผู้หยั่งรู้รอดชีวิต'], a: 0, w: 'ชาวบ้านชนะเมื่อหมาป่าถูกกำจัดครบทุกตัว' }],
+                r: [['ผู้ดำเนินเกม', 'ไม่ได้เป็นผู้เล่นในฝ่ายใด ทำหน้าที่เล่าเรื่อง เรียกบทบาท และนับคะแนนโหวต', [['🎙️', 'ผู้ดำเนินเกม', 'เล่าเรื่อง เรียกบทบาท นับโหวต', 215]]], ['หมาป่า', 'ลืมตาตอนกลางคืนเพื่อเลือกกินชาวบ้านหนึ่งคน และต้องปิดบังตัวตนตอนกลางวัน', [['🐺', 'หมาป่า', 'ตื่นตอนกลางคืนเพื่อเลือกกินชาวบ้าน', 0]]], ['ผู้หยั่งรู้ (Seer)', 'ตอนกลางคืนเลือกดูผู้เล่น 1 คนว่าเป็นหมาป่าหรือไม่', [['🔮', 'ผู้หยั่งรู้', 'ดูว่าใครเป็นหมาป่า 1 คนต่อคืน', 280]]], ['ชาวบ้าน', 'ไม่มีพลังพิเศษ ใช้การสังเกตและการโหวตเพื่อหาหมาป่า', [['🧑‍🌾', 'ชาวบ้าน', 'ไม่มีพลังพิเศษ ใช้การสังเกตและโหวตหาหมาป่า', 140]]], ['เงื่อนไขชนะ', 'ชาวบ้านชนะเมื่อหมาป่าหมด หมาป่าชนะเมื่อมีจำนวนเท่ากับหรือมากกว่าชาวบ้าน', [['🧑‍🌾', 'ชาวบ้านชนะ', 'หมาป่าหมด', 140], ['🐺', 'หมาป่าชนะ', 'จำนวนเท่ากับหรือมากกว่าชาวบ้าน', 0]]], ['บทบาทเสริม', 'บางฉบับมีบทบาทเพิ่ม เช่น หมอที่ปกป้องผู้เล่นหนึ่งคนในแต่ละคืน ให้ตรวจกติกาในกล่องที่คุณใช้', [['🩺', 'หมอ (บางฉบับ)', 'ปกป้องผู้เล่น 1 คนต่อคืน', 140]]]]
+            },
+            {
+                id: 'mm', n: 'Mogel Motte', e: '🦋', pl: '3-5', t: '30', pub: 1, c: ['ครอบครัว', 'ปาร์ตี้'], lv: 'เริ่มต้นง่าย', d: 'เกมไพ่ทิ้งไพ่ให้หมดมือก่อนใคร และต้องแอบโกงโดยไม่ให้ผู้เล่นที่เป็นยามจับได้',
+                st: [['เป้าหมายของเกม', 'ทิ้งไพ่ในมือให้หมดก่อนคนอื่น โดยแอบโกงทิ้งไพ่ให้ได้ แต่อย่าให้ผู้เล่นที่เป็นยามจับได้'],
+                ['เตรียมเกม', 'แจกไพ่คนละ 8 ใบ ผู้เล่นอายุมากที่สุดรับแมลงยาม (Guard Bug) วางไว้บนโต๊ะตลอดเกม แล้วเปิดไพ่ 1 ใบเพื่อเริ่มกองทิ้ง', [['🃏', 'ไพ่ในมือ', 'คนละ 8 ใบ', 215], ['🪲', 'แมลงยาม', 'ฟ้องคนโกงได้เฉพาะผู้ถือ', 140]]],
+                ['วิธีลงไพ่', 'ไพ่มีเลข 1-5 ลงไพ่ 1 ใบที่เลขมากกว่าหรือน้อยกว่าไพ่บนสุดอยู่ 1 พอดี เลข 1 กับ 5 ต่อกันได้ ถ้าลงไม่ได้ให้จั่ว 1 ใบและจบตา', [['1', '', 'ต่อได้กับ 5 และ 2', 0], ['2', '', 'ต่อได้กับ 1 และ 3', 45], ['3', '', 'ต่อได้กับ 2 และ 4', 140], ['4', '', 'ต่อได้กับ 3 และ 5', 215], ['5', '', 'ต่อได้กับ 4 และ 1', 280]]],
+                ['การโกง', 'คุณแอบทิ้งไพ่ได้ เช่น หย่อนลงพื้นหรือซ่อนในแขนเสื้อ แต่ต้องถือมือไว้เหนือโต๊ะตลอด ทำทีละ 1 ใบเท่านั้น และห้ามโกงทิ้งไพ่ใบสุดท้าย', [['🫣', 'โกงได้ทีละ 1 ใบ', 'มือต้องอยู่เหนือโต๊ะ', 25], ['🚫', 'ใบสุดท้ายห้ามโกง', 'ต้องลงไพ่จริง', 0]]],
+                ['ยามจับโกง', 'เฉพาะผู้เล่นที่ถือแมลงยามเท่านั้นที่ฟ้องคนโกงได้ ระหว่างตัดสินห้ามใครโกง และยามต้องเล่นตามกติกา ห้ามโกงเอง', [['🪲', 'แมลงยาม', 'ฟ้องคนโกงได้เฉพาะผู้ถือ', 140]]],
+                ['ไพ่แมลงสาบ', 'เมื่อมีคนลงไพ่แมลงสาบ (Cockroach) ทุกคนแย่งกันลงไพ่เลขเดียวกันทับ ผู้ที่เร็วที่สุดเท่านั้นได้ลงไพ่', [['🪳', 'Cockroach', 'ทุกคนแย่งลงเลขเดียวกันทับ', 25], ['⚡', 'คนเร็วที่สุด', 'ได้ลงไพ่ใบเดียว', 45]]],
+                ['จบรอบและคะแนน', 'เมื่อมีผู้เล่นไพ่หมดมือ รอบจบ คนอื่นนับคะแนนไพ่ในมือ ไพ่ผีเสื้อ (Cheating Moth) ใบละ 10, ไพ่พิเศษ 5, ไพ่เลข 1 เล่นรอบเท่าจำนวนผู้เล่น ใครคะแนนน้อยที่สุดชนะ', [['🦋', 'Cheating Moth', '10 คะแนน', 280], ['⭐', 'ไพ่พิเศษ', '5 คะแนน', 45], ['🔢', 'ไพ่เลข', '1 คะแนน', 215]]]],
+                sit: [{ c: 'คุณเหลือไพ่ 1 ใบ และอยากแอบโกงทิ้งใบสุดท้ายลงใต้โต๊ะ ทำได้ไหม?', o: ['ทำได้ ถ้ายามไม่เห็น', 'ทำไม่ได้', 'ทำได้ ถ้าเป็นไพ่เลข 1'], a: 1, w: 'ห้ามโกงทิ้งไพ่ใบสุดท้าย' },
+                { c: 'ไพ่บนกองทิ้งเป็นเลข 5 คุณลงไพ่เลขอะไรได้?', o: ['เลข 4 หรือ 1', 'เลข 3 หรือ 5', 'เลขอะไรก็ได้'], a: 0, w: 'ลงเลขมากหรือน้อยกว่า 1 พอดี และเลข 5 ต่อกับเลข 1 ได้' },
+                { c: 'คุณถือแมลงยามอยู่ คุณแอบโกงทิ้งไพ่ได้ไหม?', o: ['ได้ ถ้ามั่นใจว่าไม่มีใครเห็น', 'ไม่ได้ ยามห้ามโกง'], a: 1, w: 'ผู้เล่นที่เป็นยามไม่ได้รับอนุญาตให้โกง' }],
+                qz: [{ c: 'เมื่อลงไพ่ไม่ได้ ต้องทำอย่างไร?', o: ['จั่ว 1 ใบและจบตา', 'ข้ามตาโดยไม่ต้องทำอะไร', 'จั่ว 2 ใบ'], a: 0, w: 'ถ้าลงไพ่ไม่ได้ ให้จั่ว 1 ใบและจบตา' },
+                { c: 'ใครฟ้องคนโกงได้?', o: ['ทุกคน', 'ผู้เล่นที่ถือแมลงยามเท่านั้น', 'ผู้เล่นที่อายุน้อยที่สุด'], a: 1, w: 'เฉพาะผู้ที่ถือแมลงยามเท่านั้นที่ฟ้องได้' },
+                { c: 'ไพ่ผีเสื้อ (Cheating Moth) ที่ค้างในมือตอนจบรอบ ได้กี่คะแนน?', o: ['1 คะแนน', '5 คะแนน', '10 คะแนน'], a: 2, w: 'ผีเสื้อใบละ 10 คะแนน และคะแนนน้อยที่สุดคือผู้ชนะ' }],
+                r: [['ลงไพ่', 'ต้องลงเลขมากหรือน้อยกว่าไพ่บนสุด 1 พอดี และเลข 5 ต่อกับเลข 1 ได้', [['1', '', 'ต่อได้กับ 5 และ 2', 0], ['2', '', 'ต่อได้กับ 1 และ 3', 45], ['3', '', 'ต่อได้กับ 2 และ 4', 140], ['4', '', 'ต่อได้กับ 3 และ 5', 215], ['5', '', 'ต่อได้กับ 4 และ 1', 280]]], ['การโกง', 'ทิ้งไพ่แอบๆ ได้ทีละ 1 ใบ ต้องถือมือเหนือโต๊ะ และห้ามโกงทิ้งไพ่ใบสุดท้าย', [['🫣', 'โกงได้ทีละ 1 ใบ', 'มือต้องอยู่เหนือโต๊ะ', 25], ['🚫', 'ใบสุดท้ายห้ามโกง', 'ต้องลงไพ่จริง', 0]]], ['แมลงยาม (Guard Bug)', 'ผู้ถือเท่านั้นที่ฟ้องคนโกงได้ ระหว่างตัดสินห้ามใครโกง และยามโกงเองไม่ได้', [['🪲', 'แมลงยาม', 'ฟ้องคนโกงได้เฉพาะผู้ถือ', 140]]], ['แมลงสาบ (Cockroach)', 'ทุกคนแย่งลงไพ่เลขเดียวกันทับ ผู้ที่เร็วที่สุดได้ลง', [['🪳', 'Cockroach', 'ทุกคนแย่งลงเลขเดียวกันทับ', 25]]], ['คะแนน', 'ผีเสื้อ 10, ไพ่พิเศษ 5, ไพ่เลข 1 ต่อใบ เล่นเท่าจำนวนผู้เล่นรอบ คะแนนน้อยที่สุดชนะ', [['🦋', 'Cheating Moth', '10 คะแนน', 280], ['⭐', 'ไพ่พิเศษ', '5 คะแนน', 45], ['🔢', 'ไพ่เลข', '1 คะแนน', 215]]]]
+            },
+            {
+                id: 'tb', n: 'คำต้องห้าม', e: '🤐', pl: '3+', t: '15-30', pub: 1, c: ['ปาร์ตี้', 'ครอบครัว'], lv: 'เริ่มต้นง่าย', d: 'ปาร์ตี้เกมจากเทพลีลา ทุกคนมีคำต้องห้ามแปะหน้าผาก ห้ามพูดคำของตัวเอง แต่ต้องหาทางให้เพื่อนพูดคำของเขา',
+                st: [['เป้าหมายของเกม', 'พยายามไม่พูดคำต้องห้ามของตัวเอง และหาวิธีให้เพื่อนพูดคำต้องห้ามของเขาออกมา'],
+                ['เตรียมเกม', 'ผู้เล่นทุกคนได้รับคำต้องห้ามของตัวเอง แปะไว้บนหน้าผาก คนอื่นมองเห็นแต่เจ้าตัวมองไม่เห็น', [['🤐', 'คำของคุณ', 'แปะหน้าผาก คุณมองไม่เห็น', 350], ['👀', 'คำของเพื่อน', 'คุณมองเห็น แต่เจ้าตัวไม่เห็น', 175]]],
+                ['ระหว่างเล่น', 'ทุกคนคุยกันตามปกติ คุณรู้คำของเพื่อนแต่ไม่รู้คำของตัวเอง ชวนเพื่อนคุยให้เขาหลุดพูดคำนั้น และระวังอย่าพูดคำของตัวเอง', [['🗣️', 'คุยตามปกติ', 'ห้ามพูดคำของตัวเอง', 215], ['🎯', 'ชวนเพื่อนหลุด', 'ให้เพื่อนพูดคำของเขา', 45]]],
+                ['เคล็ดลับการชวนคุย', 'อย่าบอกคำตรงๆ ให้ชวนคุยเรื่องที่เกี่ยวข้องกับคำนั้น เพื่อให้เพื่อนเป็นฝ่ายพูดออกมาเอง'],
+                ['เมื่อมีคนพลาด', 'ผู้เล่นที่พูดคำต้องห้ามของตัวเองออกมาถือว่าพลาด บทลงโทษและการนับคะแนนให้ดูตามกติกาในกล่องเกมที่คุณใช้']],
+                sit: [{ c: 'คุณมองเห็นคำต้องห้ามบนหน้าผากของตัวเองได้ไหม?', o: ['ได้', 'ไม่ได้ คนอื่นเห็นแต่คุณไม่เห็น'], a: 1, w: 'คำแปะบนหน้าผาก คนอื่นจึงเห็นแต่เจ้าของคำมองไม่เห็น' },
+                { c: 'คุณอยากให้เพื่อนพูดคำต้องห้ามของเขา ควรทำอย่างไร?', o: ['ถามชี้นำให้ตรงตัวที่สุด', 'ชวนคุยเรื่องที่เกี่ยวข้องเพื่อให้เขาใช้คำนั้นเอง', 'บอกคำนั้นให้เพื่อนฟัง'], a: 1, w: 'เป้าหมายคือให้เพื่อนเป็นฝ่ายพูดคำนั้นเอง ไม่ใช่เราพูดแทน' }],
+                qz: [{ c: 'คำต้องห้ามของคุณอยู่ที่ไหน?', o: ['บนหน้าผากของคุณ', 'ในมือของคุณ', 'บนโต๊ะ'], a: 0, w: 'แปะบนหน้าผาก คนอื่นจึงเห็นแต่คุณไม่เห็น' },
+                { c: 'เป้าหมายหลักของเกมคืออะไร?', o: ['ไม่พูดคำของตัวเอง และทำให้เพื่อนพูดคำของเขา', 'เดาคำของตัวเองให้ถูก', 'ซ่อนคำของตัวเองไว้ในมือ'], a: 0, w: 'ไม่พูดคำของตัวเอง และหาทางให้เพื่อนพูดคำของเขาออกมา' }],
+                r: [['คำต้องห้าม', 'คำที่แปะบนหน้าผากของคุณ ห้ามพูดออกมา และคุณมองไม่เห็น', [['🤐', 'คำต้องห้าม', 'ห้ามพูด และคุณมองไม่เห็น', 350]]], ['การชวนคุย', 'ชวนเพื่อนคุยหัวข้อที่เกี่ยวข้อง เพื่อให้เพื่อนพูดคำของเขาเอง'], ['ภาคเสริม', 'มีชุดคำศัพท์เพิ่มเติมจำหน่ายแยกต่างหาก']]
+            },
+            {
+                id: 'sf', n: 'Spyfall', e: '🕵️', pl: '3-8', t: '8-10', pub: 1, c: ['ผจญภัย', 'กลยุทธ์'], lv: 'ปานกลาง', d: 'เกมสายลับ ทุกคนรู้สถานที่ยกเว้นสายลับ ผู้เล่นต้องถามตอบเพื่อจับสายลับ ส่วนสายลับต้องเดาสถานที่ให้ได้',
+                st: [['เป้าหมายของเกม', 'ผู้เล่นทั่วไปต้องหาสายลับให้เจอ ส่วนสายลับต้องเดาสถานที่ให้ถูก หรือรอดจนหมดเวลาโดยไม่ถูกจับได้'],
+                ['แจกการ์ด', 'ทุกคนได้การ์ดสถานที่เดียวกันพร้อมบทบาทของตัวเอง ยกเว้น 1 คนที่ได้การ์ดสายลับ ซึ่งไม่รู้ว่าสถานที่คืออะไร', [['📍', 'การ์ดสถานที่', 'สถานที่ + บทบาท เช่น ชายหาด · ไลฟ์การ์ด', 175], ['🕵️', 'การ์ดสายลับ', 'ไม่มีข้อมูลสถานที่', 0]]],
+                ['ถามตอบ', 'เริ่มจับเวลา 8 นาที ผลัดกันถามคำถามเกี่ยวกับสถานที่ ผู้ถูกถามตอบแล้วเป็นคนถามต่อ ควรถามให้ไม่เผยสถานที่ชัดเกินไป', [['❓', 'ถาม', 'ถามเกี่ยวกับสถานที่', 215], ['💬', 'ตอบ', 'แล้วผู้ตอบเป็นคนถามต่อ', 140]]],
+                ['สายลับเดาสถานที่', 'สายลับหยุดเกมได้ระหว่างที่นาฬิกาเดินอยู่ เปิดการ์ดแล้วเดาสถานที่ ถ้าเดาถูกสายลับชนะ', [['📍', 'สายลับเดาสถานที่', 'หยุดเกม เปิดตัว แล้วเดา', 280]]],
+                ['กล่าวหา', 'ผู้เล่นทั่วไปหยุดเกมเพื่อกล่าวหาใครก็ได้ว่าเป็นสายลับ คนอื่นโหวต โดยผู้ถูกกล่าวหาไม่โหวต ถ้าเป็นเอกฉันท์คนนั้นเปิดการ์ด ถ้าไม่เป็นเอกฉันท์ให้จับเวลาต่อ', [['☝️', 'กล่าวหา', 'ชี้คนที่สงสัย', 45], ['🗳️', 'โหวตเอกฉันท์', 'ผู้ถูกกล่าวหาไม่โหวต', 215]]],
+                ['หมดเวลา', 'เมื่อครบ 8 นาที ผู้เล่นผลัดกันกล่าวหาโดยเริ่มจากคนแจกไพ่ ถ้าไม่มีใครกล่าวหาได้เอกฉันท์เลย สายลับชนะ', [['⏱️', 'ครบ 8 นาที', 'ผลัดกันกล่าวหา', 45]]],
+                ['ผลแพ้ชนะ', 'ผู้เล่นทั่วไปชนะเมื่อจับสายลับได้ สายลับชนะเมื่อเดาสถานที่ถูก ถูกกล่าวหาผิดคนด้วยเสียงเอกฉันท์ หรือไม่มีใครกล่าวหาเอกฉันท์สำเร็จ', [['✅', 'จับสายลับถูก', 'ผู้เล่นทั่วไปชนะ', 140], ['❌', 'กล่าวหาผิดคน', 'สายลับชนะ', 0], ['📍', 'สายลับเดาถูก', 'สายลับชนะ', 280]]]],
+                sit: [{ c: 'ทุกคนโหวตเอกฉันท์กล่าวหาเพื่อนคนหนึ่ง แต่เขาไม่ใช่สายลับ ใครชนะ?', o: ['ผู้เล่นทั่วไปชนะ', 'สายลับชนะ', 'เล่นต่อ'], a: 1, w: 'ถ้าเปิดการ์ดแล้วเป็นผู้เล่นทั่วไป สายลับชนะ' },
+                { c: 'คุณเป็นสายลับและเดาสถานที่ได้แล้ว ทำอะไรได้?', o: ['รอจนหมดเวลาเท่านั้น', 'หยุดเกม เปิดตัว แล้วเดาสถานที่', 'ถามเพื่อนว่าสถานที่คืออะไร'], a: 1, w: 'สายลับหยุดเกมแล้วเดาสถานที่ได้ ถ้าถูกชนะทันที' }],
+                qz: [{ c: 'ใครไม่รู้สถานที่?', o: ['สายลับ', 'ผู้เล่นทุกคน', 'คนแจกไพ่'], a: 0, w: 'สายลับได้การ์ดที่ไม่มีข้อมูลสถานที่' },
+                { c: 'การโหวตกล่าวหาต้องได้เสียงเท่าไรจึงเปิดการ์ด?', o: ['เกินครึ่ง', 'เอกฉันท์ โดยไม่นับผู้ถูกกล่าวหา', '1 เสียง'], a: 1, w: 'ต้องเอกฉันท์ และผู้ถูกกล่าวหาไม่ได้โหวต' },
+                { c: 'รอบหนึ่งจับเวลากี่นาที?', o: ['3 นาที', '8 นาที', '20 นาที'], a: 1, w: 'กติกามาตรฐานจับเวลา 8 นาทีต่อรอบ' }],
+                r: [['การ์ดสถานที่', 'บอกสถานที่และบทบาทของคุณ ส่วนสายลับได้การ์ดที่ไม่มีข้อมูล', [['📍', 'การ์ดสถานที่', 'สถานที่ + บทบาท เช่น ชายหาด · ไลฟ์การ์ด', 175], ['🕵️', 'การ์ดสายลับ', 'ไม่มีข้อมูลสถานที่', 0]]], ['คำถาม', 'ถามเกี่ยวกับสถานที่ ไม่ควรเผยรายละเอียดจนสายลับเดาได้ง่าย'], ['การกล่าวหา', 'ต้องโหวตเอกฉันท์ โดยผู้ถูกกล่าวหาไม่ได้โหวต', [['🗳️', 'โหวตเอกฉันท์', 'ผู้ถูกกล่าวหาไม่โหวต', 215]]], ['สายลับเดาสถานที่', 'หยุดเกม เปิดตัว แล้วเดาสถานที่ ถ้าถูกชนะทันที', [['📍', 'สายลับเดาสถานที่', 'หยุดเกม เปิดตัว แล้วเดา', 280]]], ['หมดเวลา', 'ผลัดกันกล่าวหาโดยเริ่มจากคนแจกไพ่ ถ้าไม่มีใครได้เอกฉันท์ สายลับชนะ', [['⏱️', 'ครบ 8 นาที', 'ผลัดกันกล่าวหา', 45]]]]
+            }];
+        const $ = s => document.querySelector(s), A = $('#app');
+        const E = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        let S = { p: {}, q: {}, g: SEED, ad: 0, u: 'ผู้เล่น', h: [], fb: [], cv: {}, rt: [], lg: '', cfg: { url: 'http://localhost:11434', m: 'llama3.2', demo: 0 } }, T = {}, P = {}, Q = {};
+        try { const x = JSON.parse(localStorage.getItem('bgt9')); if (x && x.g) S = x } catch (e) { }
+        const save = () => { try { localStorage.setItem('bgt9', JSON.stringify(S)) } catch (e) { } };
+        const G1 = id => S.g.find(g => g.id == id), pub = () => S.g.filter(g => g.pub);
+        const dn = g => (S.p[g.id] || []).length, pc = g => g.st.length ? Math.round(dn(g) / g.st.length * 100) : 0;
+        const msg = m => { const t = $('#t'); t.textContent = m; t.style.display = 'block'; clearTimeout(msg.h); msg.h = setTimeout(() => t.style.display = 'none', 2800) };
+        const app = h => { A.innerHTML = h };
+        const back = id => `<a class="btn" href="#/game/${id}">← กลับหน้าเกม</a>`;
+        const V = i => $('#' + i).value.trim();
 
-function route(){
- const[,v='home',id]=location.hash.split('/');
- if(v!='tut')T={};if(v!='prac')P={};if(v!='quiz')Q={};
- const act=['game','tut','prac','quiz','cat','q'].includes(v)?'home':v;
- document.querySelectorAll('#nv a').forEach(a=>a.classList.toggle('on',a.dataset.v==act));
- const g=G1(id);
- if(['game','tut','prac','quiz'].includes(v)&&(!g||(!g.pub&&!S.ad))){app('<h1>ไม่พบเกมนี้</h1><a class="btn pri" href="#/home">กลับไปหน้าแรก</a>');return}
- ({home,game,tut,prac,quiz,ai,cat,q:results,user:usr,hist,fb:fbp,prog,admin}[v]||home)(id);scrollTo(0,0)}
-addEventListener('hashchange',route);
+        function route() {
+            const [, v = 'home', id] = location.hash.split('/');
+            if (v != 'tut') T = {}; if (v != 'prac') P = {}; if (v != 'quiz') Q = {};
+            const act = ['game', 'tut', 'prac', 'quiz', 'cat', 'q'].includes(v) ? 'home' : v;
+            document.querySelectorAll('#nv a').forEach(a => a.classList.toggle('on', a.dataset.v == act));
+            const g = G1(id);
+            if (['game', 'tut', 'prac', 'quiz'].includes(v) && (!g || (!g.pub && !S.ad))) { app('<h1>ไม่พบเกมนี้</h1><a class="btn pri" href="#/home">กลับไปหน้าแรก</a>'); return }
+            ({ home, game, tut, prac, quiz, ai, cat, q: results, user: usr, hist, fb: fbp, prog, admin }[v] || home)(id); scrollTo(0, 0)
+        }
+        addEventListener('hashchange', route);
 
-/* FR-1 หน้าแรก ค้นหา และหมวดหมู่ */
-const cr=a=>`<div class="cds">${a.map(c=>`<div class="cd" style="--h:${c[3]||200}"><span class="ci">${c[0]}</span><b>${E(c[1])}</b><small>${E(c[2]||'')}</small></div>`).join('')}</div>`;
-const IC={chat:'M21 12a8 8 0 01-11.6 7.1L4 21l1.9-5.4A8 8 0 1121 12z',menu:'M4 6h16M4 12h16M4 18h16',home:'M3 11l9-8 9 8M5 10v10h14V10',user:'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0',eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 100-6 3 3 0 000 6z',note:'M5 3h14v18H5zM9 8h6M9 12h6M9 16h4',search:'M11 18a7 7 0 100-14 7 7 0 000 14zM21 21l-5-5',chart:'M4 20V10M10 20V4M16 20v-7M2 20h20',shield:'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z',out:'M9 21H5V3h4M16 17l5-5-5-5M21 12H9',heart:'M12 21s-8-5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 6-8 11-8 11z',clock:'M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v5l3 2',bow:'M3 6l9 6-9 6zM21 6l-9 6 9 6z',dice:'M4 4h16v16H4zM9 9h.01M15 9h.01M9 15h.01M15 15h.01M12 12h.01'};
-const ic=n=>`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${IC[n]}"/></svg>`;
-const CATS=[['ผจญภัย','heart','linear-gradient(135deg,#E8657F,#D4506E)'],['ปาร์ตี้','clock','linear-gradient(135deg,#C99700,#D9A800)'],['กลยุทธ์','bow','linear-gradient(135deg,#2F7BF5,#2457D6)'],['ครอบครัว','user','linear-gradient(135deg,#3AA5E0,#1E8FD0)']];
-const card=g=>`<a class="card" href="#/game/${g.id}"><span class="em">${g.e}</span><b>${E(g.n)}</b><span class="mut">${E(g.d)}</span><span><span class="tag">${E(g.pl)} คน</span><span class="tag">${E(g.t)} นาที</span></span></a>`;
-function home(){const f=pub().find(g=>g.hit)||pub()[0];
- app(`<div class="hm"><section><h2>เกมยอดฮิต</h2>${f?`<a class="feat" href="#/game/${f.id}"><i>${ic('dice')}</i>${E(f.n)}</a><div class="tags"><span class="tag">${E(f.pl)} คน</span><span class="tag">${E(f.t)} นาที</span><span class="tag">${E(f.lv||'เริ่มต้นง่าย')}</span></div>`:'<p class="mut">ยังไม่มีเกมที่เผยแพร่</p>'}
+        /* FR-1 หน้าแรก ค้นหา และหมวดหมู่ */
+        const cr = a => `<div class="cds">${a.map(c => `<div class="cd" style="--h:${c[3] || 200}"><span class="ci">${c[0]}</span><b>${E(c[1])}</b><small>${E(c[2] || '')}</small></div>`).join('')}</div>`;
+        const IC = { chat: 'M21 12a8 8 0 01-11.6 7.1L4 21l1.9-5.4A8 8 0 1121 12z', menu: 'M4 6h16M4 12h16M4 18h16', home: 'M3 11l9-8 9 8M5 10v10h14V10', user: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0', eye: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 100-6 3 3 0 000 6z', note: 'M5 3h14v18H5zM9 8h6M9 12h6M9 16h4', search: 'M11 18a7 7 0 100-14 7 7 0 000 14zM21 21l-5-5', chart: 'M4 20V10M10 20V4M16 20v-7M2 20h20', shield: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z', out: 'M9 21H5V3h4M16 17l5-5-5-5M21 12H9', heart: 'M12 21s-8-5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 6-8 11-8 11z', clock: 'M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v5l3 2', bow: 'M3 6l9 6-9 6zM21 6l-9 6 9 6z', dice: 'M4 4h16v16H4zM9 9h.01M15 9h.01M9 15h.01M15 15h.01M12 12h.01' };
+        const ic = n => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${IC[n]}"/></svg>`;
+        const CATS = [['ผจญภัย', 'heart', 'linear-gradient(135deg,#E8657F,#D4506E)'], ['ปาร์ตี้', 'clock', 'linear-gradient(135deg,#C99700,#D9A800)'], ['กลยุทธ์', 'bow', 'linear-gradient(135deg,#2F7BF5,#2457D6)'], ['ครอบครัว', 'user', 'linear-gradient(135deg,#3AA5E0,#1E8FD0)']];
+        const card = g => `<a class="card" href="#/game/${g.id}"><span class="em">${g.e}</span><b>${E(g.n)}</b><span class="mut">${E(g.d)}</span><span><span class="tag">${E(g.pl)} คน</span><span class="tag">${E(g.t)} นาที</span></span></a>`;
+        function home() {
+            const f = pub().find(g => g.hit) || pub()[0];
+            app(`<div class="hm"><section><h2>เกมยอดฮิต</h2>${f ? `<a class="feat" href="#/game/${f.id}"><i>${ic('dice')}</i>${E(f.n)}</a><div class="tags"><span class="tag">${E(f.pl)} คน</span><span class="tag">${E(f.t)} นาที</span><span class="tag">${E(f.lv || 'เริ่มต้นง่าย')}</span></div>` : '<p class="mut">ยังไม่มีเกมที่เผยแพร่</p>'}
  <h2>เกมทั้งหมด</h2><div class="grid">${pub().map(card).join('')}</div></section>
- <section><h2>หมวดหมู่</h2><div class="cats">${CATS.map((c,i)=>`<a class="cat" style="background:${c[2]}" href="#/cat/${i}">${ic(c[1])}${c[0]}</a>`).join('')}</div></section></div>`)}
-function cat(i){const c=CATS[i]||CATS[0],l=pub().filter(g=>(g.c||[]).includes(c[0]));
- app(`<a href="#/home">← กลับหน้าแรก</a><h1>หมวด${c[0]}</h1>${l.length?`<div class="grid">${l.map(card).join('')}</div>`:'<p class="mut">ยังไม่มีเกมในหมวดนี้ ลองเลือกหมวดอื่นหรือค้นหาด้วยชื่อเกม</p>'}`)}
-function sq(){if(V('s')){location.hash=='#/q'?results():location.hash='#/q'}else if(location.hash=='#/q')location.hash='#/home'}
-function results(){const k=V('s').toLowerCase(),gs=pub().filter(g=>g.n.toLowerCase().includes(k)),r=[];
- pub().forEach(g=>g.r.forEach(x=>(x[0]+' '+x[1]).toLowerCase().includes(k)&&r.push([g,x])));
- app(`<h1>ผลการค้นหา “${E(k)}”</h1>${gs.length?`<h2>เกม</h2><div class="grid">${gs.map(card).join('')}</div>`:''}${r.length?`<h2>กฎ</h2>${r.map(([g,x])=>`<div class="card2"><span class="tag">${E(g.n)}</span><h2>${E(x[0])}</h2><p>${E(x[1])}</p>${x[2]?cr(x[2]):''}<a href="#/game/${g.id}">ไปที่หน้าเกมนี้</a></div>`).join('')}`:''}${gs.length||r.length?'':'<p class="mut">ไม่พบเกมหรือกฎที่ตรงกับคำค้น ลองใช้คำที่สั้นลง หรือค้นหาด้วยชื่ออื่น</p>'}`)}
-function game(id){const g=G1(id);S.h=[id,...S.h.filter(x=>x!=id)].slice(0,12);save();
- app(`<a href="#/home">← เลือกเกมอื่น</a><h1>${g.e} ${E(g.n)}</h1><p>${E(g.d)}</p><span class="tag">${E(g.pl)} ผู้เล่น</span><span class="tag">${E(g.t)} นาที</span>${g.pub?'':'<span class="tag">ฉบับร่าง</span>'}
+ <section><h2>หมวดหมู่</h2><div class="cats">${CATS.map((c, i) => `<a class="cat" style="background:${c[2]}" href="#/cat/${i}">${ic(c[1])}${c[0]}</a>`).join('')}</div></section></div>`)
+        }
+        function cat(i) {
+            const c = CATS[i] || CATS[0], l = pub().filter(g => (g.c || []).includes(c[0]));
+            app(`<a href="#/home">← กลับหน้าแรก</a><h1>หมวด${c[0]}</h1>${l.length ? `<div class="grid">${l.map(card).join('')}</div>` : '<p class="mut">ยังไม่มีเกมในหมวดนี้ ลองเลือกหมวดอื่นหรือค้นหาด้วยชื่อเกม</p>'}`)
+        }
+        function sq() { if (V('s')) { location.hash == '#/q' ? results() : location.hash = '#/q' } else if (location.hash == '#/q') location.hash = '#/home' }
+        function results() {
+            const k = V('s').toLowerCase(), gs = pub().filter(g => g.n.toLowerCase().includes(k)), r = [];
+            pub().forEach(g => g.r.forEach(x => (x[0] + ' ' + x[1]).toLowerCase().includes(k) && r.push([g, x])));
+            app(`<h1>ผลการค้นหา “${E(k)}”</h1>${gs.length ? `<h2>เกม</h2><div class="grid">${gs.map(card).join('')}</div>` : ''}${r.length ? `<h2>กฎ</h2>${r.map(([g, x]) => `<div class="card2"><span class="tag">${E(g.n)}</span><h2>${E(x[0])}</h2><p>${E(x[1])}</p>${x[2] ? cr(x[2]) : ''}<a href="#/game/${g.id}">ไปที่หน้าเกมนี้</a></div>`).join('')}` : ''}${gs.length || r.length ? '' : '<p class="mut">ไม่พบเกมหรือกฎที่ตรงกับคำค้น ลองใช้คำที่สั้นลง หรือค้นหาด้วยชื่ออื่น</p>'}`)
+        }
+        function game(id) {
+            const g = G1(id); S.h = [id, ...S.h.filter(x => x != id)].slice(0, 12); save();
+            app(`<a href="#/home">← เลือกเกมอื่น</a><h1>${g.e} ${E(g.n)}</h1><p>${E(g.d)}</p><span class="tag">${E(g.pl)} ผู้เล่น</span><span class="tag">${E(g.t)} นาที</span>${g.pub ? '' : '<span class="tag">ฉบับร่าง</span>'}
  <div class="card2"><b>ความคืบหน้า ${dn(g)}/${g.st.length} ขั้นตอน</b><div class="bar"><i style="width:${pc(g)}%"></i></div></div>
- <div class="row"><a class="btn pri" href="#/tut/${id}">${dn(g)?'เรียนต่อ':'เริ่มเรียน'}</a><a class="btn" href="#/prac/${id}">ฝึกสถานการณ์ (${g.sit.length})</a><a class="btn" href="#/quiz/${id}">ทดสอบความเข้าใจ</a><a class="btn" href="#/ai/${id}">ถามผู้ช่วย AI</a></div>
- <h2>กฎของเกมนี้</h2>${g.r.map(r=>`<details class="card2"><summary><b>${E(r[0])}</b></summary><p>${E(r[1])}</p>${r[2]?cr(r[2]):''}</details>`).join('')||'<p class="mut">ยังไม่มีกฎในเกมนี้</p>'}`)}
+ <div class="row"><a class="btn pri" href="#/tut/${id}">${dn(g) ? 'เรียนต่อ' : 'เริ่มเรียน'}</a><a class="btn" href="#/prac/${id}">ฝึกสถานการณ์ (${g.sit.length})</a><a class="btn" href="#/quiz/${id}">ทดสอบความเข้าใจ</a><a class="btn" href="#/ai/${id}">ถามผู้ช่วย AI</a></div>
+ <h2>กฎของเกมนี้</h2>${g.r.map(r => `<details class="card2"><summary><b>${E(r[0])}</b></summary><p>${E(r[1])}</p>${r[2] ? cr(r[2]) : ''}</details>`).join('') || '<p class="mut">ยังไม่มีกฎในเกมนี้</p>'}`)
+        }
 
-/* FR-2 บทเรียนทีละขั้น */
-function tut(id){const g=G1(id),n=g.st.length;
- if(!n)return app(back(id)+'<h1>บทเรียน</h1><p>เกมนี้ยังไม่มีบทเรียน</p>');
- if(T.id!=id)T={id,i:dn(g)>=n?0:dn(g)};const s=g.st[T.i];
- app(`${back(id)}<h1>${E(g.n)}</h1><div class="bar"><i style="width:${(T.i+1)/n*100}%"></i></div><p class="mut">ขั้นที่ ${T.i+1} จาก ${n}</p>
- <div class="card2"><h2>${E(s[0])}</h2><p>${E(s[1])}</p>${s[2]?cr(s[2]):''}</div>
- <div class="row"><button class="btn" onclick="tm()" ${T.i?'':'disabled'}>ย้อนกลับ</button><button class="btn pri" onclick="tn()">${T.i==n-1?'จบบทเรียน':'ถัดไป'}</button></div>`)}
-const tm=()=>{T.i--;tut(T.id)};
-function tn(){const g=G1(T.id),d=S.p[g.id]=S.p[g.id]||[];if(!d.includes(T.i))d.push(T.i);save();
- if(T.i==g.st.length-1){msg('เรียนครบแล้ว ลองทดสอบความเข้าใจได้เลย');location.hash='#/game/'+g.id}else{T.i++;tut(g.id)}}
+        /* FR-2 บทเรียนทีละขั้น */
+        function tut(id) {
+            const g = G1(id), n = g.st.length;
+            if (!n) return app(back(id) + '<h1>บทเรียน</h1><p>เกมนี้ยังไม่มีบทเรียน</p>');
+            if (T.id != id) T = { id, i: dn(g) >= n ? 0 : dn(g) }; const s = g.st[T.i];
+            app(`${back(id)}<h1>${E(g.n)}</h1><div class="bar"><i style="width:${(T.i + 1) / n * 100}%"></i></div><p class="mut">ขั้นที่ ${T.i + 1} จาก ${n}</p>
+ <div class="card2"><h2>${E(s[0])}</h2><p>${E(s[1])}</p>${s[2] ? cr(s[2]) : ''}</div>
+ <div class="row"><button class="btn" onclick="tm()" ${T.i ? '' : 'disabled'}>ย้อนกลับ</button><button class="btn pri" onclick="tn()">${T.i == n - 1 ? 'จบบทเรียน' : 'ถัดไป'}</button></div>`)
+        }
+        const tm = () => { T.i--; tut(T.id) };
+        function tn() {
+            const g = G1(T.id), d = S.p[g.id] = S.p[g.id] || []; if (!d.includes(T.i)) d.push(T.i); save();
+            if (T.i == g.st.length - 1) { msg('เรียนครบแล้ว ลองทดสอบความเข้าใจได้เลย'); location.hash = '#/game/' + g.id } else { T.i++; tut(g.id) }
+        }
 
-/* FR-3 ฝึกสถานการณ์ */
-const opts=(x,a,f)=>x.o.map((o,j)=>`<button class="opt ${a==null?'':j==x.a?'ok':j==a?'bad':''}" ${a==null?'':'disabled'} onclick="${f}(${j})">${E(o)}</button>`).join('');
-const fb=(x,a)=>`<div class="fb ${a==x.a?'ok':'bad'}"><b>${a==x.a?'ถูกต้อง':'ยังไม่ถูก'}</b> ${E(x.w)}</div>`;
-function prac(id){const g=G1(id);if(P.id!=id)P={id,i:0,a:null};const x=g.sit[P.i];
- if(!x)return app(back(id)+'<h1>ฝึกสถานการณ์</h1><p>เกมนี้ยังไม่มีสถานการณ์ให้ฝึก</p>');
- app(`${back(id)}<h1>ฝึกสถานการณ์</h1><p class="mut">สถานการณ์ที่ ${P.i+1} จาก ${g.sit.length}</p><div class="card2"><p><b>${E(x.c)}</b></p>${opts(x,P.a,'pa')}</div>${P.a==null?'':fb(x,P.a)+`<button class="btn pri" onclick="pn()">${P.i==g.sit.length-1?'จบการฝึก':'สถานการณ์ถัดไป'}</button>`}`)}
-const pa=j=>{P.a=j;prac(P.id)};
-function pn(){const g=G1(P.id);if(P.i==g.sit.length-1)location.hash='#/game/'+g.id;else{P.i++;P.a=null;prac(g.id)}}
+        /* FR-3 ฝึกสถานการณ์ */
+        const opts = (x, a, f) => x.o.map((o, j) => `<button class="opt ${a == null ? '' : j == x.a ? 'ok' : j == a ? 'bad' : ''}" ${a == null ? '' : 'disabled'} onclick="${f}(${j})">${E(o)}</button>`).join('');
+        const fb = (x, a) => `<div class="fb ${a == x.a ? 'ok' : 'bad'}"><b>${a == x.a ? 'ถูกต้อง' : 'ยังไม่ถูก'}</b> ${E(x.w)}</div>`;
+        function prac(id) {
+            const g = G1(id); if (P.id != id) P = { id, i: 0, a: null }; const x = g.sit[P.i];
+            if (!x) return app(back(id) + '<h1>ฝึกสถานการณ์</h1><p>เกมนี้ยังไม่มีสถานการณ์ให้ฝึก</p>');
+            app(`${back(id)}<h1>ฝึกสถานการณ์</h1><p class="mut">สถานการณ์ที่ ${P.i + 1} จาก ${g.sit.length}</p><div class="card2"><p><b>${E(x.c)}</b></p>${opts(x, P.a, 'pa')}</div>${P.a == null ? '' : fb(x, P.a) + `<button class="btn pri" onclick="pn()">${P.i == g.sit.length - 1 ? 'จบการฝึก' : 'สถานการณ์ถัดไป'}</button>`}`)
+        }
+        const pa = j => { P.a = j; prac(P.id) };
+        function pn() { const g = G1(P.id); if (P.i == g.sit.length - 1) location.hash = '#/game/' + g.id; else { P.i++; P.a = null; prac(g.id) } }
 
+        /* FR-4 ทดสอบความเข้าใจ */
+        function quiz(id) {
+            const g = G1(id), n = g.qz.length;
+            if (!g.st.length || dn(g) < g.st.length) return app(`${back(id)}<h1>ทดสอบความเข้าใจ</h1><div class="card2"><p>เรียนบทเรียนให้ครบก่อนจึงจะทดสอบได้ (ตอนนี้ ${dn(g)} จาก ${g.st.length} ขั้นตอน)</p><a class="btn pri" href="#/tut/${id}">ไปเรียนต่อ</a></div>`);
+            if (!n) return app(back(id) + '<h1>ทดสอบความเข้าใจ</h1><p>เกมนี้ยังไม่มีข้อสอบ</p>');
+            if (Q.id != id) Q = { id, i: 0, a: null, s: 0 };
+            if (Q.i >= n) {
+                const b = S.q[id] = Math.max(S.q[id] || 0, Q.s); save();
+                return app(`${back(id)}<h1>ผลการทดสอบ</h1><div class="card2"><h2>${Q.s} / ${n} ข้อ</h2><p>${Q.s == n ? 'พร้อมเล่นแล้ว คุณเข้าใจกฎหลักครบทุกข้อ' : 'ยังมีบางข้อที่ควรทบทวน กลับไปอ่านบทเรียนหรือกฎ แล้วลองใหม่'}</p><p class="mut">คะแนนสูงสุด ${b} / ${n}</p></div><div class="row"><button class="btn pri" onclick="qr()">ทำใหม่</button><a class="btn" href="#/tut/${id}">ทบทวนบทเรียน</a></div>`)
+            }
+            const x = g.qz[Q.i];
+            app(`${back(id)}<h1>ทดสอบความเข้าใจ</h1><p class="mut">ข้อที่ ${Q.i + 1} จาก ${n}</p><div class="card2"><p><b>${E(x.c)}</b></p>${opts(x, Q.a, 'qa')}</div>${Q.a == null ? '' : fb(x, Q.a) + `<button class="btn pri" onclick="qn()">${Q.i == n - 1 ? 'ดูผล' : 'ข้อถัดไป'}</button>`}`)
+        }
+        const qa = j => { const x = G1(Q.id).qz[Q.i]; Q.a = j; if (j == x.a) Q.s++; quiz(Q.id) };
+        const qn = () => { Q.i++; Q.a = null; quiz(Q.id) };
+        const qr = () => { const id = Q.id; Q = {}; quiz(id) };
 
-</script>
+    </script>
 
 </body>
+
 </html>
