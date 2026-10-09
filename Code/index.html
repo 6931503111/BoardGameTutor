@@ -174,6 +174,28 @@ function route(){
  if(['game','tut','prac','quiz'].includes(v)&&(!g||(!g.pub&&!S.ad))){app('<h1>ไม่พบเกมนี้</h1><a class="btn pri" href="#/home">กลับไปหน้าแรก</a>');return}
  ({home,game,tut,prac,quiz,ai,cat,q:results,user:usr,hist,fb:fbp,prog,admin}[v]||home)(id);scrollTo(0,0)}
 addEventListener('hashchange',route);
+
+/* FR-1 หน้าแรก ค้นหา และหมวดหมู่ */
+const cr=a=>`<div class="cds">${a.map(c=>`<div class="cd" style="--h:${c[3]||200}"><span class="ci">${c[0]}</span><b>${E(c[1])}</b><small>${E(c[2]||'')}</small></div>`).join('')}</div>`;
+const IC={chat:'M21 12a8 8 0 01-11.6 7.1L4 21l1.9-5.4A8 8 0 1121 12z',menu:'M4 6h16M4 12h16M4 18h16',home:'M3 11l9-8 9 8M5 10v10h14V10',user:'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0',eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 100-6 3 3 0 000 6z',note:'M5 3h14v18H5zM9 8h6M9 12h6M9 16h4',search:'M11 18a7 7 0 100-14 7 7 0 000 14zM21 21l-5-5',chart:'M4 20V10M10 20V4M16 20v-7M2 20h20',shield:'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z',out:'M9 21H5V3h4M16 17l5-5-5-5M21 12H9',heart:'M12 21s-8-5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 6-8 11-8 11z',clock:'M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v5l3 2',bow:'M3 6l9 6-9 6zM21 6l-9 6 9 6z',dice:'M4 4h16v16H4zM9 9h.01M15 9h.01M9 15h.01M15 15h.01M12 12h.01'};
+const ic=n=>`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${IC[n]}"/></svg>`;
+const CATS=[['ผจญภัย','heart','linear-gradient(135deg,#E8657F,#D4506E)'],['ปาร์ตี้','clock','linear-gradient(135deg,#C99700,#D9A800)'],['กลยุทธ์','bow','linear-gradient(135deg,#2F7BF5,#2457D6)'],['ครอบครัว','user','linear-gradient(135deg,#3AA5E0,#1E8FD0)']];
+const card=g=>`<a class="card" href="#/game/${g.id}"><span class="em">${g.e}</span><b>${E(g.n)}</b><span class="mut">${E(g.d)}</span><span><span class="tag">${E(g.pl)} คน</span><span class="tag">${E(g.t)} นาที</span></span></a>`;
+function home(){const f=pub().find(g=>g.hit)||pub()[0];
+ app(`<div class="hm"><section><h2>เกมยอดฮิต</h2>${f?`<a class="feat" href="#/game/${f.id}"><i>${ic('dice')}</i>${E(f.n)}</a><div class="tags"><span class="tag">${E(f.pl)} คน</span><span class="tag">${E(f.t)} นาที</span><span class="tag">${E(f.lv||'เริ่มต้นง่าย')}</span></div>`:'<p class="mut">ยังไม่มีเกมที่เผยแพร่</p>'}
+ <h2>เกมทั้งหมด</h2><div class="grid">${pub().map(card).join('')}</div></section>
+ <section><h2>หมวดหมู่</h2><div class="cats">${CATS.map((c,i)=>`<a class="cat" style="background:${c[2]}" href="#/cat/${i}">${ic(c[1])}${c[0]}</a>`).join('')}</div></section></div>`)}
+function cat(i){const c=CATS[i]||CATS[0],l=pub().filter(g=>(g.c||[]).includes(c[0]));
+ app(`<a href="#/home">← กลับหน้าแรก</a><h1>หมวด${c[0]}</h1>${l.length?`<div class="grid">${l.map(card).join('')}</div>`:'<p class="mut">ยังไม่มีเกมในหมวดนี้ ลองเลือกหมวดอื่นหรือค้นหาด้วยชื่อเกม</p>'}`)}
+function sq(){if(V('s')){location.hash=='#/q'?results():location.hash='#/q'}else if(location.hash=='#/q')location.hash='#/home'}
+function results(){const k=V('s').toLowerCase(),gs=pub().filter(g=>g.n.toLowerCase().includes(k)),r=[];
+ pub().forEach(g=>g.r.forEach(x=>(x[0]+' '+x[1]).toLowerCase().includes(k)&&r.push([g,x])));
+ app(`<h1>ผลการค้นหา “${E(k)}”</h1>${gs.length?`<h2>เกม</h2><div class="grid">${gs.map(card).join('')}</div>`:''}${r.length?`<h2>กฎ</h2>${r.map(([g,x])=>`<div class="card2"><span class="tag">${E(g.n)}</span><h2>${E(x[0])}</h2><p>${E(x[1])}</p>${x[2]?cr(x[2]):''}<a href="#/game/${g.id}">ไปที่หน้าเกมนี้</a></div>`).join('')}`:''}${gs.length||r.length?'':'<p class="mut">ไม่พบเกมหรือกฎที่ตรงกับคำค้น ลองใช้คำที่สั้นลง หรือค้นหาด้วยชื่ออื่น</p>'}`)}
+function game(id){const g=G1(id);S.h=[id,...S.h.filter(x=>x!=id)].slice(0,12);save();
+ app(`<a href="#/home">← เลือกเกมอื่น</a><h1>${g.e} ${E(g.n)}</h1><p>${E(g.d)}</p><span class="tag">${E(g.pl)} ผู้เล่น</span><span class="tag">${E(g.t)} นาที</span>${g.pub?'':'<span class="tag">ฉบับร่าง</span>'}
+ <div class="card2"><b>ความคืบหน้า ${dn(g)}/${g.st.length} ขั้นตอน</b><div class="bar"><i style="width:${pc(g)}%"></i></div></div>
+ <div class="row"><a class="btn pri" href="#/tut/${id}">${dn(g)?'เรียนต่อ':'เริ่มเรียน'}</a><a class="btn" href="#/prac/${id}">ฝึกสถานการณ์ (${g.sit.length})</a><a class="btn" href="#/quiz/${id}">ทดสอบความเข้าใจ</a><a class="btn" href="#/ai/${id}">ถามผู้ช่วย AI</a></div>
+ <h2>กฎของเกมนี้</h2>${g.r.map(r=>`<details class="card2"><summary><b>${E(r[0])}</b></summary><p>${E(r[1])}</p>${r[2]?cr(r[2]):''}</details>`).join('')||'<p class="mut">ยังไม่มีกฎในเกมนี้</p>'}`)}
 </script>
 
 </body>
