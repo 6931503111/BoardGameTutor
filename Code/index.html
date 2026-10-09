@@ -196,6 +196,18 @@ function game(id){const g=G1(id);S.h=[id,...S.h.filter(x=>x!=id)].slice(0,12);sa
  <div class="card2"><b>ความคืบหน้า ${dn(g)}/${g.st.length} ขั้นตอน</b><div class="bar"><i style="width:${pc(g)}%"></i></div></div>
  <div class="row"><a class="btn pri" href="#/tut/${id}">${dn(g)?'เรียนต่อ':'เริ่มเรียน'}</a><a class="btn" href="#/prac/${id}">ฝึกสถานการณ์ (${g.sit.length})</a><a class="btn" href="#/quiz/${id}">ทดสอบความเข้าใจ</a><a class="btn" href="#/ai/${id}">ถามผู้ช่วย AI</a></div>
  <h2>กฎของเกมนี้</h2>${g.r.map(r=>`<details class="card2"><summary><b>${E(r[0])}</b></summary><p>${E(r[1])}</p>${r[2]?cr(r[2]):''}</details>`).join('')||'<p class="mut">ยังไม่มีกฎในเกมนี้</p>'}`)}
+
+/* FR-2 บทเรียนทีละขั้น */
+function tut(id){const g=G1(id),n=g.st.length;
+ if(!n)return app(back(id)+'<h1>บทเรียน</h1><p>เกมนี้ยังไม่มีบทเรียน</p>');
+ if(T.id!=id)T={id,i:dn(g)>=n?0:dn(g)};const s=g.st[T.i];
+ app(`${back(id)}<h1>${E(g.n)}</h1><div class="bar"><i style="width:${(T.i+1)/n*100}%"></i></div><p class="mut">ขั้นที่ ${T.i+1} จาก ${n}</p>
+ <div class="card2"><h2>${E(s[0])}</h2><p>${E(s[1])}</p>${s[2]?cr(s[2]):''}</div>
+ <div class="row"><button class="btn" onclick="tm()" ${T.i?'':'disabled'}>ย้อนกลับ</button><button class="btn pri" onclick="tn()">${T.i==n-1?'จบบทเรียน':'ถัดไป'}</button></div>`)}
+const tm=()=>{T.i--;tut(T.id)};
+function tn(){const g=G1(T.id),d=S.p[g.id]=S.p[g.id]||[];if(!d.includes(T.i))d.push(T.i);save();
+ if(T.i==g.st.length-1){msg('เรียนครบแล้ว ลองทดสอบความเข้าใจได้เลย');location.hash='#/game/'+g.id}else{T.i++;tut(g.id)}}
+
 </script>
 
 </body>
