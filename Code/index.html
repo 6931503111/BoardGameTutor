@@ -208,6 +208,16 @@ const tm=()=>{T.i--;tut(T.id)};
 function tn(){const g=G1(T.id),d=S.p[g.id]=S.p[g.id]||[];if(!d.includes(T.i))d.push(T.i);save();
  if(T.i==g.st.length-1){msg('เรียนครบแล้ว ลองทดสอบความเข้าใจได้เลย');location.hash='#/game/'+g.id}else{T.i++;tut(g.id)}}
 
+/* FR-3 ฝึกสถานการณ์ */
+const opts=(x,a,f)=>x.o.map((o,j)=>`<button class="opt ${a==null?'':j==x.a?'ok':j==a?'bad':''}" ${a==null?'':'disabled'} onclick="${f}(${j})">${E(o)}</button>`).join('');
+const fb=(x,a)=>`<div class="fb ${a==x.a?'ok':'bad'}"><b>${a==x.a?'ถูกต้อง':'ยังไม่ถูก'}</b> ${E(x.w)}</div>`;
+function prac(id){const g=G1(id);if(P.id!=id)P={id,i:0,a:null};const x=g.sit[P.i];
+ if(!x)return app(back(id)+'<h1>ฝึกสถานการณ์</h1><p>เกมนี้ยังไม่มีสถานการณ์ให้ฝึก</p>');
+ app(`${back(id)}<h1>ฝึกสถานการณ์</h1><p class="mut">สถานการณ์ที่ ${P.i+1} จาก ${g.sit.length}</p><div class="card2"><p><b>${E(x.c)}</b></p>${opts(x,P.a,'pa')}</div>${P.a==null?'':fb(x,P.a)+`<button class="btn pri" onclick="pn()">${P.i==g.sit.length-1?'จบการฝึก':'สถานการณ์ถัดไป'}</button>`}`)}
+const pa=j=>{P.a=j;prac(P.id)};
+function pn(){const g=G1(P.id);if(P.i==g.sit.length-1)location.hash='#/game/'+g.id;else{P.i++;P.a=null;prac(g.id)}}
+
+
 </script>
 
 </body>
