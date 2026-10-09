@@ -832,6 +832,26 @@ function prog(){app(`<h1>ความคืบหน้าการเรีย�
  <span class="mut">${S.q[g.id]!=null?`ทดสอบสูงสุด ${S.q[g.id]} / ${g.qz.length}`:'ยังไม่ได้ทดสอบ'}</span>
  <a class="btn" href="#/${pc(g)==100?'quiz':'tut'}/${g.id}">${pc(g)==100?'ไปทดสอบ':dn(g)?'เรียนต่อ':'เริ่มเรียน'}</a></div>`}).join('')}</div>`)}
 
+/* FR-7 จัดการเนื้อหา (ผู้ดูแล) */
+function admin(){
+ if(!S.ad)return app(`<h1>ผู้ดูแลระบบ</h1><div class="card2"><p>หน้านี้สำหรับผู้ดูแลเนื้อหาเท่านั้น ต้นแบบนี้ใช้ปุ่มจำลองการเข้าสู่ระบบ</p><button class="btn pri" onclick="S.ad=1;save();admin()">เข้าสู่ระบบผู้ดูแล</button></div>`);
+ const o=S.g.map(g=>`<option value="${g.id}">${E(g.n)}</option>`).join('');
+ app(`<h1>จัดการเนื้อหาเกม</h1><p class="mut">บทเรียนและกฎที่เผยแพร่แล้วจะเป็นฐานความรู้ (Knowledge Base) ของผู้ช่วย AI ด้วย</p><button class="btn" onclick="S.ad=0;save();admin()">ออกจากระบบ</button>
+ <h2>เกมทั้งหมด</h2>${S.g.map(g=>`<div class="card2"><b>${g.e} ${E(g.n)}</b> <span class="tag">${g.pub?'เผยแพร่แล้ว':'ฉบับร่าง'}</span><span class="tag">${g.st.length} ขั้นตอน</span><span class="tag">${g.sit.length} สถานการณ์</span><span class="tag">${g.qz.length} ข้อสอบ</span><span class="tag">${g.r.length} กฎ</span><div class="row"><button class="btn" onclick="tg('${g.id}')">${g.pub?'ยกเลิกการเผยแพร่':'ตรวจสอบแล้ว และเผยแพร่'}</button></div></div>`).join('')}
+ <h2>เพิ่มเกมใหม่</h2><div class="card2"><label>ชื่อเกม<input id="gn" class="in"></label><label>คำอธิบายสั้น<input id="gd" class="in"></label><label>หมวดหมู่<select id="gc">${CATS.map(c=>`<option>${c[0]}</option>`).join('')}</select></label><label>จำนวนผู้เล่น<input id="gp" class="in" placeholder="2-4"></label><label>เวลาเล่น (นาที)<input id="gt" class="in" placeholder="30"></label><button class="btn pri" onclick="ag()">เพิ่มเกม</button></div>
+ <h2>เพิ่มบทเรียนหรือกฎ</h2><div class="card2"><label>เกม<select id="cg">${o}</select></label><label>ประเภท<select id="ct"><option value="st">ขั้นตอนบทเรียน</option><option value="r">กฎสำหรับค้นหา</option></select></label><label>หัวข้อ<input id="ch" class="in"></label><label>เนื้อหา<textarea id="cx" rows="3"></textarea></label><button class="btn pri" onclick="ac()">บันทึกเนื้อหา</button></div>
+ <h2>เพิ่มสถานการณ์หรือข้อสอบ</h2><div class="card2"><label>เกม<select id="sg">${o}</select></label><label>ใช้เป็น<select id="sk"><option value="sit">สถานการณ์ฝึก</option><option value="qz">ข้อสอบ</option></select></label><label>โจทย์<textarea id="sc" rows="2"></textarea></label><label>ตัวเลือก (บรรทัดละ 1 ข้อ)<textarea id="so" rows="3"></textarea></label><label>เฉลยคือข้อที่<input id="sa" class="in" type="number" min="1" value="1"></label><label>คำอธิบายเฉลย<input id="sw" class="in"></label><button class="btn pri" onclick="asit()">บันทึกโจทย์</button></div>`)}
+const tg=id=>{const g=G1(id);g.pub=g.pub?0:1;save();admin();msg(g.pub?'เผยแพร่เกมแล้ว':'ยกเลิกการเผยแพร่แล้ว')};
+function ag(){const n=V('gn'),d=V('gd');if(!n||!d)return msg('กรอกชื่อเกมและคำอธิบายก่อนบันทึก');
+ S.g.push({id:'g'+Date.now(),n,e:'🎲',pl:V('gp')||'-',t:V('gt')||'-',d,pub:0,c:[V('gc')],lv:'เริ่มต้นง่าย',st:[],sit:[],qz:[],r:[]});save();admin();msg('เพิ่มเกมแล้ว สถานะ ฉบับร่าง')}
+function ac(){const t=V('ch'),x=V('cx');if(!t||!x)return msg('กรอกหัวข้อและเนื้อหาให้ครบ');
+ G1(V('cg'))[V('ct')].push([t,x]);save();admin();msg('บันทึกเนื้อหาแล้ว')}
+function asit(){const c=V('sc'),o=V('so').split('\n').map(s=>s.trim()).filter(Boolean),a=+V('sa')-1,w=V('sw');
+ if(!c||!w||o.length<2||!(a>=0&&a<o.length))return msg('กรอกให้ครบ ใส่ตัวเลือกอย่างน้อย 2 ข้อ และเฉลยต้องตรงกับหมายเลขข้อ');
+ G1(V('sg'))[V('sk')].push({c,o,a,w});save();admin();msg('บันทึกโจทย์แล้ว')}
+$('#mb').innerHTML=ic('menu');$('#si').innerHTML=ic('search');$('.out').innerHTML=ic('out');
+$('#nv').innerHTML=[['home','home','หน้าแรก'],['ai','chat','ผู้ช่วย AI'],['user','user','ข้อมูลผู้ใช้'],['hist','eye','ประวัติการดู'],['fb','note','ข้อเสนอแนะ'],['prog','chart','ความคืบหน้า'],['admin','shield','ผู้ดูแลระบบ']].map(([v,i,t])=>`<a data-v="${v}" href="#/${v}" title="${t}" aria-label="${t}">${ic(i)}<span>${t}</span></a>`).join('');
+route();
     </script>
 
 </body>
