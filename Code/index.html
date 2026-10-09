@@ -826,6 +826,12 @@
         function sf() { const x = V('fx'); if (!x) return msg('เขียนรายละเอียดก่อนส่ง'); S.fb.unshift({ t: V('ft'), x }); save(); fbp(); msg('ส่งข้อเสนอแนะแล้ว') }
         function lo() { S.ad = 0; save(); msg('ออกจากระบบแล้ว'); location.hash = '#/home'; route() }
 
+/* FR-6 ความคืบหน้า */
+function prog(){app(`<h1>ความคืบหน้าการเรียน</h1><div class="grid">${pub().map(g=>{const d=S.p[g.id]||[];return`<div class="card"><b>${g.e} ${E(g.n)}</b><div class="bar"><i style="width:${pc(g)}%"></i></div><span>${pc(g)==100?'เรียนครบแล้ว':`เรียนแล้ว ${dn(g)} จาก ${g.st.length} ขั้นตอน`}</span>
+ <ul class="ck">${g.st.map((s,i)=>`<li>${d.includes(i)?'✔':'○'} ${E(s[0])}</li>`).join('')}</ul>
+ <span class="mut">${S.q[g.id]!=null?`ทดสอบสูงสุด ${S.q[g.id]} / ${g.qz.length}`:'ยังไม่ได้ทดสอบ'}</span>
+ <a class="btn" href="#/${pc(g)==100?'quiz':'tut'}/${g.id}">${pc(g)==100?'ไปทดสอบ':dn(g)?'เรียนต่อ':'เริ่มเรียน'}</a></div>`}).join('')}</div>`)}
+
     </script>
 
 </body>
