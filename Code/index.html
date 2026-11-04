@@ -313,11 +313,17 @@
             line-height: 1.2
         }
 
+        .game-image { width: 100%; height: 180px; object-fit: contain; background: var(--bg2); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 8px }
+        .game-cover { display: block; max-width: 420px; height: 260px; margin: 16px 0; width: 100% }
+        .game-thumbnail { display: block; width: 120px; height: 90px; margin: 12px 0 }
+
         .n {
             font-size: 28px;
             font-weight: 700;
             line-height: 1.2
         }
+
+        .btn.danger { color: var(--red); border-color: var(--red) }
 
         .tag {
             display: inline-block;
@@ -464,43 +470,50 @@
         }
 
         .cds {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin: 16px 0 4px
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+            gap: 16px;
+            max-width: 960px;
+            margin: 20px 0 4px;
+            align-items: start
         }
 
         .cd {
-            width: 124px;
-            min-height: 176px;
-            padding: 12px 10px;
+            min-width: 0;
+            padding: 20px;
             border-radius: 14px;
             border: 2px solid hsl(var(--h) 50% 42%);
             background: linear-gradient(160deg, hsl(var(--h) 75% 94%), hsl(var(--h) 65% 82%));
             color: #1B2238;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            gap: 6px;
+            align-items: flex-start;
+            text-align: left;
+            overflow-wrap: anywhere;
+            gap: 10px;
             box-shadow: 0 3px 0 hsl(var(--h) 50% 42% / .35)
         }
 
-        .ci {
-            font-size: 40px;
-            line-height: 1.1
-        }
-
         .cd b {
-            font-size: 14px;
-            line-height: 1.3
+            font-size: 17px;
+            line-height: 1.5
         }
 
         .cd small {
-            font-size: 12px;
-            line-height: 1.35
+            font-size: 15px;
+            line-height: 1.8
         }
+
+        .rule-body { max-width: 78ch; line-height: 1.9; overflow-wrap: anywhere }
+        .rule-body p { margin: 12px 0 }
+        .rule-body ul { padding-left: 24px; margin: 12px 0 }
+        .rule-body li + li { margin-top: 8px }
+        .rule-section summary { padding: 6px 0; line-height: 1.6 }
+        .rule-section[open] summary { border-bottom: 1px solid var(--line); padding-bottom: 14px }
+        .rule-section .cds { grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)) }
+        .rule-section .cds:has(> :only-child) { max-width: 560px }
+        .practice-preview { margin-top: 20px }
+        .practice-preview h3 { margin-top: 0 }
 
         @media(prefers-reduced-motion:no-preference) {
             .cd {
@@ -544,6 +557,9 @@
             margin-top: 6px
         }
 
+        .bb small { display: block; margin-top: 8px }
+        .src details { margin: 8px 0; line-height: 1.7 }
+
         .chips {
             margin: 6px 0 10px
         }
@@ -580,6 +596,7 @@
         </div>
     </div>
     <div id="t" role="status"></div>
+    <script src="pdf-ocr.js"></script>
     <script>
         const SEED = [
             {
@@ -658,12 +675,14 @@
                 { c: 'การโหวตกล่าวหาต้องได้เสียงเท่าไรจึงเปิดการ์ด?', o: ['เกินครึ่ง', 'เอกฉันท์ โดยไม่นับผู้ถูกกล่าวหา', '1 เสียง'], a: 1, w: 'ต้องเอกฉันท์ และผู้ถูกกล่าวหาไม่ได้โหวต' },
                 { c: 'รอบหนึ่งจับเวลากี่นาที?', o: ['3 นาที', '8 นาที', '20 นาที'], a: 1, w: 'กติกามาตรฐานจับเวลา 8 นาทีต่อรอบ' }],
                 r: [['การ์ดสถานที่', 'บอกสถานที่และบทบาทของคุณ ส่วนสายลับได้การ์ดที่ไม่มีข้อมูล', [['📍', 'การ์ดสถานที่', 'สถานที่ + บทบาท เช่น ชายหาด · ไลฟ์การ์ด', 175], ['🕵️', 'การ์ดสายลับ', 'ไม่มีข้อมูลสถานที่', 0]]], ['คำถาม', 'ถามเกี่ยวกับสถานที่ ไม่ควรเผยรายละเอียดจนสายลับเดาได้ง่าย'], ['การกล่าวหา', 'ต้องโหวตเอกฉันท์ โดยผู้ถูกกล่าวหาไม่ได้โหวต', [['🗳️', 'โหวตเอกฉันท์', 'ผู้ถูกกล่าวหาไม่โหวต', 215]]], ['สายลับเดาสถานที่', 'หยุดเกม เปิดตัว แล้วเดาสถานที่ ถ้าถูกชนะทันที', [['📍', 'สายลับเดาสถานที่', 'หยุดเกม เปิดตัว แล้วเดา', 280]]], ['หมดเวลา', 'ผลัดกันกล่าวหาโดยเริ่มจากคนแจกไพ่ ถ้าไม่มีใครได้เอกฉันท์ สายลับชนะ', [['⏱️', 'ครบ 8 นาที', 'ผลัดกันกล่าวหา', 45]]]]
-            }];
+            }
+            ];
         const $ = s => document.querySelector(s), A = $('#app');
-        const E = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        const withoutEmoji = s => String(s).replace(/([0-9#*])\uFE0F?\u20E3/g, '$1').replace(/[\p{Extended_Pictographic}\p{Regional_Indicator}\p{Emoji_Modifier}\uFE0F\u200D]/gu, '');
+        const E = (s, preserveEmoji = false) => (preserveEmoji ? String(s) : withoutEmoji(s)).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
         const API_BASE = window.BGT_API_BASE || (['localhost', '127.0.0.1'].includes(location.hostname) ? 'http://127.0.0.1:8000' : '');
         let API_READY = !API_BASE, API_ERROR = '';
-        let S = { p: {}, q: {}, g: SEED, ad: 0, u: 'ผู้เล่น', h: [], fb: [], cv: {}, rt: [], lg: '', cfg: { url: 'http://localhost:11434', m: 'llama3.2', demo: 0 } }, T = {}, P = {}, Q = {};
+        let S = { p: {}, q: {}, g: SEED, ad: 0, u: 'ผู้เล่น', h: [], fb: [], cv: {}, rt: [], lg: '', cfg: { url: 'http://localhost:11434', m: 'qwen3:1.7b', demo: 0 } }, T = {}, P = {}, Q = {};
         let ADMIN_TOKEN = sessionStorage.getItem('bgtAdminToken') || '';
         try {
             const x = JSON.parse(localStorage.getItem('bgt9'));
@@ -707,11 +726,8 @@
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const serverGames = await response.json();
                 if (!Array.isArray(serverGames)) throw new Error('รูปแบบข้อมูลเกมจาก API ไม่ถูกต้อง');
-                const serverById = new Map(serverGames.map(g => [g.id, g]));
-                const localGames = S.g || SEED;
-                S.g = localGames.map(g => serverById.get(g.id) || g);
-                const knownIds = new Set(S.g.map(g => g.id));
-                serverGames.forEach(g => { if (!knownIds.has(g.id)) S.g.push(g) });
+                // The database is authoritative; merging seeds here resurrects deleted games.
+                S.g = serverGames;
                 API_READY = true;
                 API_ERROR = '';
             } catch (e) {
@@ -807,11 +823,24 @@
         }
 
         /* FR-1 หน้าแรก ค้นหา และหมวดหมู่ */
-        const cr = a => `<div class="cds">${a.map(c => `<div class="cd" style="--h:${c[3] || 200}"><span class="ci">${c[0]}</span><b>${E(c[1])}</b><small>${E(c[2] || '')}</small></div>`).join('')}</div>`;
+        const cr = a => `<div class="cds">${a.map(c => `<div class="cd" style="--h:${Number.isFinite(Number(c[3])) ? Math.max(0, Math.min(360, Number(c[3]))) : 200}"><b>${E(c[1])}</b><small>${E(c[2] || '')}</small></div>`).join('')}</div>`;
+        // Render plain source text as readable blocks; never interpret generated HTML.
+        function ruleText(text) {
+            const blocks = String(text || '').replace(/\r\n?/g, '\n').split(/\n+/).map(s => s.trim()).filter(Boolean);
+            let html = '', list = false;
+            for (const block of blocks) {
+                const bullet = /^(?:[-•*]|\d+[.)])\s+/.test(block);
+                if (bullet && !list) { html += '<ul>'; list = true }
+                if (!bullet && list) { html += '</ul>'; list = false }
+                html += bullet ? `<li>${E(block.replace(/^(?:[-•*]|\d+[.)])\s+/, ''))}</li>` : `<p>${E(block)}</p>`;
+            }
+            return `<div class="rule-body">${html}${list ? '</ul>' : ''}</div>`;
+        }
         const IC = { chat: 'M21 12a8 8 0 01-11.6 7.1L4 21l1.9-5.4A8 8 0 1121 12z', menu: 'M4 6h16M4 12h16M4 18h16', home: 'M3 11l9-8 9 8M5 10v10h14V10', user: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0', eye: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 100-6 3 3 0 000 6z', note: 'M5 3h14v18H5zM9 8h6M9 12h6M9 16h4', search: 'M11 18a7 7 0 100-14 7 7 0 000 14zM21 21l-5-5', chart: 'M4 20V10M10 20V4M16 20v-7M2 20h20', shield: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z', out: 'M9 21H5V3h4M16 17l5-5-5-5M21 12H9', heart: 'M12 21s-8-5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 6-8 11-8 11z', clock: 'M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v5l3 2', bow: 'M3 6l9 6-9 6zM21 6l-9 6 9 6z', dice: 'M4 4h16v16H4zM9 9h.01M15 9h.01M9 15h.01M15 15h.01M12 12h.01' };
         const ic = n => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${IC[n]}"/></svg>`;
         const CATS = [['ผจญภัย', 'heart', 'linear-gradient(135deg,#E8657F,#D4506E)'], ['ปาร์ตี้', 'clock', 'linear-gradient(135deg,#C99700,#D9A800)'], ['กลยุทธ์', 'bow', 'linear-gradient(135deg,#2F7BF5,#2457D6)'], ['ครอบครัว', 'user', 'linear-gradient(135deg,#3AA5E0,#1E8FD0)']];
-        const card = g => `<a class="card" href="#/game/${g.id}"><span class="em">${g.e}</span><b>${E(g.n)}</b><span class="mut">${E(g.d)}</span><span><span class="tag">${E(g.pl)} คน</span><span class="tag">${E(g.t)} นาที</span></span></a>`;
+        const gameImage = (g, extra = '') => typeof g.image === 'string' && /^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(g.image) ? `<img class="game-image ${extra}" src="${E(g.image)}" alt="รูปเกม ${E(g.n)}" loading="lazy">` : '';
+        const card = g => `<a class="card" href="#/game/${g.id}">${gameImage(g) || `<span class="em" aria-hidden="true">${ic('dice')}</span>`}<b>${E(g.n)}</b><span class="mut">${E(g.d)}</span><span><span class="tag">${E(g.pl)} คน</span><span class="tag">${E(g.t)} นาที</span></span></a>`;
         function home() {
             const f = pub().find(g => g.hit) || pub()[0];
             app(`<div class="hm"><section><h2>เกมยอดฮิต</h2>${f ? `<a class="feat" href="#/game/${f.id}"><i>${ic('dice')}</i>${E(f.n)}</a><div class="tags"><span class="tag">${E(f.pl)} คน</span><span class="tag">${E(f.t)} นาที</span><span class="tag">${E(f.lv || 'เริ่มต้นง่าย')}</span></div>` : '<p class="mut">ยังไม่มีเกมที่เผยแพร่</p>'}
@@ -830,10 +859,10 @@
         }
         function game(id) {
             const g = G1(id); S.h = [id, ...S.h.filter(x => x != id)].slice(0, 12); save();
-            app(`<a href="#/home">← เลือกเกมอื่น</a><h1>${g.e} ${E(g.n)}</h1><p>${E(g.d)}</p><span class="tag">${E(g.pl)} ผู้เล่น</span><span class="tag">${E(g.t)} นาที</span>${g.pub ? '' : '<span class="tag">ฉบับร่าง</span>'}
+            app(`<a href="#/home">← เลือกเกมอื่น</a><h1>${E(g.n)}</h1>${gameImage(g,'game-cover')}<p>${E(g.d)}</p><span class="tag">${E(g.pl)} ผู้เล่น</span><span class="tag">${E(g.t)} นาที</span>${g.pub ? '' : '<span class="tag">ฉบับร่าง</span>'}
  <div class="card2"><b>ความคืบหน้า ${dn(g)}/${g.st.length} ขั้นตอน</b><div class="bar"><i style="width:${pc(g)}%"></i></div></div>
- <div class="row"><a class="btn pri" href="#/tut/${id}">${dn(g) ? 'เรียนต่อ' : 'เริ่มเรียน'}</a><a class="btn" href="#/prac/${id}">ฝึกสถานการณ์ (${g.sit.length})</a><a class="btn" href="#/quiz/${id}">ทดสอบความเข้าใจ</a><a class="btn" href="#/ai/${id}">ถามผู้ช่วย AI</a></div>
- <h2>กฎของเกมนี้</h2>${g.r.map(r => `<details class="card2"><summary><b>${E(r[0])}</b></summary><p>${E(r[1])}</p>${r[2] ? cr(r[2]) : ''}</details>`).join('') || '<p class="mut">ยังไม่มีกฎในเกมนี้</p>'}`)
+ <div class="row"><a class="btn pri" href="#/tut/${id}">${dn(g) ? 'เรียนต่อ' : 'เริ่มเรียน'}</a><a class="btn" href="#/prac/${id}">ฝึกสถานการณ์ (${g.sit.length})</a><a class="btn" href="#/quiz/${id}">ทดสอบความเข้าใจ (${g.qz.length})</a><a class="btn" href="#/ai/${id}">ถามผู้ช่วย AI</a></div>
+ <h2>กฎของเกมนี้</h2>${g.r.map((r,i) => `<details class="card2 rule-section" ${i === 0 ? 'open' : ''}><summary><b>${E(r[0])}</b></summary>${ruleText(r[1])}${r[2] ? cr(r[2]) : ''}</details>`).join('') || '<p class="mut">ยังไม่มีกฎในเกมนี้</p>'}`)
         }
 
         /* FR-2 บทเรียนทีละขั้น */
@@ -842,7 +871,7 @@
             if (!n) return app(back(id) + '<h1>บทเรียน</h1><p>เกมนี้ยังไม่มีบทเรียน</p>');
             if (T.id != id) T = { id, i: dn(g) >= n ? 0 : dn(g) }; const s = g.st[T.i];
             app(`${back(id)}<h1>${E(g.n)}</h1><div class="bar"><i style="width:${(T.i + 1) / n * 100}%"></i></div><p class="mut">ขั้นที่ ${T.i + 1} จาก ${n}</p>
- <div class="card2"><h2>${E(s[0])}</h2><p>${E(s[1])}</p>${s[2] ? cr(s[2]) : ''}</div>
+ <div class="card2 rule-section"><h2>${E(s[0])}</h2>${ruleText(s[1])}${s[2] ? cr(s[2]) : ''}</div>
  <div class="row"><button class="btn" onclick="tm()" ${T.i ? '' : 'disabled'}>ย้อนกลับ</button><button class="btn pri" onclick="tn()">${T.i == n - 1 ? 'จบบทเรียน' : 'ถัดไป'}</button></div>`)
         }
         const tm = () => { T.i--; tut(T.id) };
@@ -856,7 +885,7 @@
         const fb = (x, a) => `<div class="fb ${a == x.a ? 'ok' : 'bad'}"><b>${a == x.a ? 'ถูกต้อง' : 'ยังไม่ถูก'}</b> ${E(x.w)}</div>`;
         function prac(id) {
             const g = G1(id); if (P.id != id) P = { id, i: 0, a: null }; const x = g.sit[P.i];
-            if (!x) return app(back(id) + '<h1>ฝึกสถานการณ์</h1><p>เกมนี้ยังไม่มีสถานการณ์ให้ฝึก</p>');
+            if (!x) return app(back(id) + '<h1>ฝึกสถานการณ์</h1><div class="card2"><h2>ยังไม่มีชุดฝึกสำหรับเกมนี้</h2><p>ระหว่างนี้สามารถถามตัวอย่างสถานการณ์จากกฎกับผู้ช่วย AI ได้</p><a class="btn pri" href="#/ai/'+id+'">ถามผู้ช่วย AI</a>' + (S.ad ? '<p>สร้างชุดฝึกจากกฎที่บันทึกไว้ แล้วตรวจเฉลยก่อนเพิ่มให้ผู้เล่นได้</p><a class="btn" href="#/admin">ไปสร้างโจทย์ในหน้าผู้ดูแล</a>' : '') + '</div>');
             app(`${back(id)}<h1>ฝึกสถานการณ์</h1><p class="mut">สถานการณ์ที่ ${P.i + 1} จาก ${g.sit.length}</p><div class="card2"><p><b>${E(x.c)}</b></p>${opts(x, P.a, 'pa')}</div>${P.a == null ? '' : fb(x, P.a) + `<button class="btn pri" onclick="pn()">${P.i == g.sit.length - 1 ? 'จบการฝึก' : 'สถานการณ์ถัดไป'}</button>`}`)
         }
         const pa = j => { P.a = j; prac(P.id) };
@@ -865,8 +894,8 @@
         /* FR-4 ทดสอบความเข้าใจ */
         function quiz(id) {
             const g = G1(id), n = g.qz.length;
-            if (!g.st.length || dn(g) < g.st.length) return app(`${back(id)}<h1>ทดสอบความเข้าใจ</h1><div class="card2"><p>เรียนบทเรียนให้ครบก่อนจึงจะทดสอบได้ (ตอนนี้ ${dn(g)} จาก ${g.st.length} ขั้นตอน)</p><a class="btn pri" href="#/tut/${id}">ไปเรียนต่อ</a></div>`);
-            if (!n) return app(back(id) + '<h1>ทดสอบความเข้าใจ</h1><p>เกมนี้ยังไม่มีข้อสอบ</p>');
+            if (!n) return app(`${back(id)}<h1>ทดสอบความเข้าใจ</h1><div class="card2"><h2>ยังไม่มีข้อสอบสำหรับเกมนี้</h2><p>ผู้ดูแลสามารถสร้างข้อสอบจากกติกา แล้วตรวจเฉลยก่อนเพิ่มให้ผู้เล่นได้</p>${S.ad?`<a class="btn pri" href="#/admin/${id}">ไปสร้างข้อสอบให้เกมนี้</a>`:`<a class="btn" href="#/ai/${id}">ถามกติกากับผู้ช่วย AI</a>`}</div>`);
+            if (g.st.length && dn(g) < g.st.length) return app(`${back(id)}<h1>ทดสอบความเข้าใจ</h1><div class="card2"><p>เรียนบทเรียนให้ครบก่อนจึงจะทดสอบได้ (ตอนนี้ ${dn(g)} จาก ${g.st.length} ขั้นตอน)</p><a class="btn pri" href="#/tut/${id}">ไปเรียนต่อ</a></div>`);
             if (Q.id != id) Q = { id, i: 0, a: null, s: 0 };
             if (Q.i >= n) {
                 const b = S.q[id] = Math.max(S.q[id] || 0, Q.s); save();
@@ -880,7 +909,7 @@
         const qr = () => { const id = Q.id; Q = {}; quiz(id) };
 
         /* FR-5 / FR-8 ผู้ช่วย AI: ค้นฐานความรู้ของเกม (RAG) แล้วให้โมเดลบน Ollama เรียบเรียงคำตอบ */
-        let W = 0; const TH = 1.2;
+        const TH = 1.2;
         const SW = ['คืออะไร', 'ทำอย่างไร', 'อย่างไร', 'เมื่อไหร่', 'เมื่อไร', 'เท่าไหร่', 'เท่าไร', 'ที่ไหน', 'ตรงไหน', 'อะไร', 'ไหม', 'หรือไม่', 'ยังไง', 'ทำไม', 'ใคร', 'กี่', 'บ้าง', 'ช่วย', 'หน่อย', 'ของ', 'ขอ', 'และ', 'แล้ว', 'ที่', 'เป็น', 'คือ', 'ให้', 'ได้', 'จะ', 'ต้อง', 'ควร', 'เกม', 'เล่น', 'ครับ', 'ค่ะ'];
         const tok = (t, q) => { t = t.toLowerCase(); if (q) SW.forEach(w => t = t.split(w).join(' ')); const r = new Set((t.match(/[a-z0-9]{2,}/g) || []).map(w => 'w' + w)); t.split(/[^\u0E00-\u0E7F]+/).forEach(x => { x = x.replace(/[\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]/g, ''); for (let i = 0; i < x.length - 1; i++)r.add(x.slice(i, i + 2)) }); return r };
         const kb = g => [...g.st.map(x => ({ t: x[0], x: x[1], k: 'บทเรียน' })), ...g.r.map(x => ({ t: x[0], x: x[1], k: 'กฎ' }))];
@@ -901,37 +930,69 @@
                 if (!r.ok) throw 0; const j = await r.json(); return j.message.content.trim()
             } finally { clearTimeout(tm) }
         }
-        const bub = m => `<div class="bb ${m.r}${m.e ? ' err' : ''}">${E(m.t).replace(/\n/g, '<br>')}${m.s && m.s.length ? `<div class="src">${m.s.map(x => `<span class="tag">📖 ${E(x)}</span>`).join('')}</div>` : ''}${m.ms ? `<small class="mut">ตอบใน ${(m.ms / 1000).toFixed(1)} วินาที${m.demo ? ' · โหมดสาธิต ไม่ผ่านโมเดล' : ''}</small>` : ''}</div>`;
-        const draw = () => { const c = $('#cv'); if (!c) return; const l = S.cv[S.lg] || []; c.innerHTML = (l.map(bub).join('') || '<p class="mut">ถามกฎของเกมนี้ได้เลย ผู้ช่วยจะตอบจากฐานความรู้ของเกมและแสดงแหล่งอ้างอิง ถามต่อจากคำตอบเดิมได้โดยไม่ต้องพิมพ์คำถามซ้ำ</p>') + (W ? '<div class="bb a mut">กำลังค้นข้อมูลและเรียบเรียงคำตอบ...</div>' : ''); if (c.lastElementChild) c.lastElementChild.scrollIntoView({ block: 'nearest' }) };
+        function knowledgeVersion(g){
+            const value=JSON.stringify([g?.id,g?.r||[],g?.st||[],g?.source_text||'',g?.edition||'',g?.verified_qa||[]]);
+            let hash=2166136261;for(let i=0;i<value.length;i++)hash=Math.imul(hash^value.charCodeAt(i),16777619);
+            return (hash>>>0).toString(16);
+        }
+        const CHAT_REQUESTS = new Map();
+        const bub = m => `<div class="bb ${m.r}${m.e ? ' err' : ''}">${m.method==='reviewed'?'<small class="mut">คำตอบตรวจเทียบกฎแล้ว</small>':''}${m.status==='clarify'?'<b>ขอรายละเอียดเพิ่มเติม</b><br>':m.status==='excerpt'?'<b>ข้อความกฎที่ค้นพบ</b><br>':m.status==='partial'?'<b>คำตอบและข้อจำกัด</b><br>':m.status==='insufficient'?'<b>ข้อมูลยังไม่เพียงพอ</b><br>':''}${E(m.t).replace(/\n/g, '<br>')}${m.sources?.length ? `<div class="src">${m.sources.map(x=>`<details><summary>อ้างอิง ${E(x.id)} · ${E(x.kind)}: ${E(x.title)}</summary>${x.edition?`<p class="mut">ฉบับ: ${E(x.edition)}</p>`:''}${ruleText(x.content)}${/^https?:\/\/[^\s]+$/.test(x.url||'')?`<a href="${E(x.url)}" target="_blank" rel="noopener noreferrer">เปิดแหล่งคู่มือ</a>`:''}</details>`).join('')}</div>` : m.s?.length ? `<div class="src">${m.s.map(x => `<span class="tag">แหล่งอ้างอิง: ${E(x)}</span>`).join('')}</div>` : ''}${m.ms ? `<small class="mut">ตอบใน ${(m.ms / 1000).toFixed(1)} วินาที${m.demo ? ' · โหมดสาธิต ไม่ผ่านโมเดล' : ''}</small>` : ''}</div>`;
+        const draw = () => { const c = $('#cv'); if (!c) return; const l = S.cv[S.lg] || [],pending=CHAT_REQUESTS.has(S.lg); c.innerHTML = (l.map(bub).join('') || '<p class="mut">ถามกฎของเกมนี้ได้เลย เช่น “จบเทิร์นต้องจั่วกี่ใบ” หรือถามต่อจากคำตอบก่อนหน้า เช่น “แล้วถ้าใช้การ์ดนี้ล่ะ” กดหัวข้ออ้างอิงใต้คำตอบเพื่ออ่านข้อความจากฐานความรู้</p>') + (pending ? '<div class="bb a mut" role="status">กำลังค้นกฎและเรียบเรียงคำตอบ...</div>' : ''); const send=$('#sendQuestion');if(send)send.disabled=pending; if (c.lastElementChild) c.lastElementChild.scrollIntoView({ block: 'nearest' }) };
         function ai(id) {
             const l = pub(); let g = G1(id || S.lg); if (!g || !(g.pub || S.ad)) g = l[0];
             if (!g) return app('<h1>ผู้ช่วย AI</h1><p class="mut">ยังไม่มีเกมที่เผยแพร่</p>');
             S.lg = g.id; const r = S.rt, a = r.length ? (r.reduce((x, y) => x + y, 0) / r.length / 1000).toFixed(1) : 0;
             app(`<h1>ผู้ช่วย AI ตอบกฎ</h1><label>เกมที่ต้องการถาม<select id="aig" onchange="location.hash='#/ai/'+this.value">${l.map(x => `<option value="${x.id}" ${x.id == g.id ? 'selected' : ''}>${E(x.n)}</option>`).join('')}</select></label>
- <details class="card2"><summary><b>ตั้งค่าโมเดล (Ollama)</b></summary><label>Ollama URL<input id="ou" class="in" value="${E(S.cfg.url)}"></label><label>ชื่อโมเดล<input id="om" class="in" value="${E(S.cfg.m)}"></label><label><input type="checkbox" id="od" ${S.cfg.demo ? 'checked' : ''}> โหมดสาธิต (ตอบจากฐานความรู้โดยไม่เรียกโมเดล)</label><div class="row"><button class="btn pri" onclick="scfg()">บันทึกตั้งค่า</button></div><p class="mut">${r.length ? `เวลาตอบเฉลี่ย ${a} วินาที จาก ${r.length} ครั้งล่าสุด` : 'ยังไม่มีข้อมูลเวลาตอบ'}</p></details>
+ <details class="card2"><summary><b>ตั้งค่าผู้ช่วย AI</b></summary>${API_BASE?'<p class="mut">ใช้ Ollama และโมเดลที่ Backend ตั้งค่าไว้ ระบบค้นกฎจากฐานข้อมูลของเกมที่เลือก</p>':`<label>Ollama URL<input id="ou" class="in" value="${E(S.cfg.url)}"></label><label>ชื่อโมเดล<input id="om" class="in" value="${E(S.cfg.m)}"></label>`}<label><input type="checkbox" id="od" ${S.cfg.demo ? 'checked' : ''}> โหมดสาธิต (แสดงข้อความจากฐานความรู้โดยไม่เรียก AI)</label><div class="row"><button class="btn pri" onclick="scfg()">บันทึกตั้งค่า</button></div><p class="mut">${r.length ? `เวลาตอบเฉลี่ย ${a} วินาที จาก ${r.length} ครั้งล่าสุด` : 'ยังไม่มีข้อมูลเวลาตอบ'}</p></details>
  <div id="cv" class="cv"></div>
- <div class="chips">${g.r.slice(0, 4).map((x, i) => `<button class="tag" onclick="fq(${i})">${E(x[0])} คืออะไร</button>`).join('')}</div>
- <div class="ask"><input id="qi" class="in" placeholder="พิมพ์คำถามเกี่ยวกับกฎ..." aria-label="คำถาม" onkeydown="if(event.key=='Enter')ask()"><button class="btn pri" onclick="ask()">ส่ง</button></div>
+ <div class="chips">${g.verified_qa?.length?g.verified_qa.slice(0,4).map((x,i)=>`<button class="tag" onclick="fqv(${i})">${E(x.question)}</button>`).join(''):g.r.slice(0, 4).map((x, i) => `<button class="tag" onclick="fq(${i})">${E(x[0])} คืออะไร</button>`).join('')}</div>
+ <p class="mut">กำลังถามกฎของ ${E(g.n)} · บทสนทนาแยกตามเกม · ${API_BASE?'ค้นข้อมูลผ่าน Backend':'โหมดเชื่อมต่อ Ollama โดยตรง'}<br>${g.edition?'ฉบับที่อ้างอิง: '+E(g.edition):'ยังไม่ระบุฉบับกล่อง ใช้กฎพื้นฐานที่มีในระบบ และอาจตอบบทบาทเสริมหรือกฎต่างฉบับไม่ได้'}</p>
+ <div class="ask"><input id="qi" class="in" maxlength="2000" placeholder="พิมพ์คำถามเกี่ยวกับกฎ..." aria-label="คำถาม" onkeydown="if(event.key=='Enter'&&!event.isComposing)ask()"><button id="sendQuestion" class="btn pri" onclick="ask()">ส่ง</button></div>
  <button class="btn" onclick="nc()">เริ่มบทสนทนาใหม่</button>`); draw()
         }
         const fq = i => { $('#qi').value = G1(S.lg).r[i][0] + ' คืออะไร'; $('#qi').focus() };
-        const nc = () => { delete S.cv[S.lg]; save(); ai(S.lg) };
-        function scfg() { S.cfg = { url: V('ou') || 'http://localhost:11434', m: V('om') || 'llama3.2', demo: $('#od').checked ? 1 : 0 }; save(); msg('บันทึกตั้งค่าแล้ว') }
+        const fqv = i => { $('#qi').value = G1(S.lg).verified_qa[i].question; $('#qi').focus() };
+        const nc = () => { const pending=CHAT_REQUESTS.get(S.lg);if(pending){pending.controller.abort();CHAT_REQUESTS.delete(S.lg);} delete S.cv[S.lg]; save(); ai(S.lg) };
+        function scfg() { S.cfg = { url: $('#ou')?.value.trim() || S.cfg.url || 'http://127.0.0.1:11434', m: $('#om')?.value.trim() || S.cfg.m || 'qwen3:1.7b', demo: $('#od').checked ? 1 : 0 }; save(); msg('บันทึกตั้งค่าแล้ว') }
         async function ask() {
-            const g = G1(S.lg), i = $('#qi'), q = i.value.trim(); if (!q) return msg('พิมพ์คำถามก่อนส่ง');
-            const cv = S.cv[g.id] = S.cv[g.id] || [], prev = [...cv].reverse().find(m => m.r == 'u');
-            cv.push({ r: 'u', t: q }); i.value = '';
-            const fin = m => { cv.push(m); W = 0; S.cv[g.id] = cv.slice(-30); save(); draw() };
-            W = 1; draw();
-            if (q.replace(/[\s\u0021-\u002F\u003A-\u0040]+/g, '').length < 3) return fin({ r: 'a', t: 'ขอรายละเอียดเพิ่มอีกนิดได้ไหม เช่น อยากรู้กฎข้อไหนหรือสถานการณ์แบบไหน จะได้หาข้อมูลได้ตรงขึ้น' });
-            let h = retr(g, q);
-            if (!h.length && prev && (q.length <= 8 || /แล้ว|ล่ะ|นั้น|นี้|ต่อ|อีก|งั้น|เหมือน|ตัวอย่าง|เพิ่มเติม|อธิบาย/.test(q))) h = retr(g, prev.t + ' ' + q);
-            if (!h.length) return fin({ r: 'a', t: 'ไม่พบข้อมูลที่รองรับคำถามนี้ในฐานความรู้ของเกมนี้ จึงยังตอบไม่ได้ ลองถามให้เฉพาะเจาะจงขึ้น หรือตรวจกติกาในคู่มือเกม' });
-            const t0 = performance.now(); let a;
-            try { a = S.cfg.demo ? 'ตามฐานความรู้ของเกมนี้: ' + h[0].x + (h[1] ? '\n\nที่เกี่ยวข้อง: ' + h[1].x : '') : await llm(g, cv, h, q) }
-            catch (e) { return fin({ r: 'a', e: 1, t: 'ผู้ช่วย AI ใช้งานไม่ได้ในขณะนี้ ตรวจสอบว่าเปิด Ollama อยู่ และ URL กับชื่อโมเดลในส่วนตั้งค่าถูกต้อง แล้วลองส่งอีกครั้ง หรือเปิดโหมดสาธิตเพื่อดูหน้าจอโดยไม่เรียกโมเดล' }) }
-            const ms = performance.now() - t0; S.rt = [...S.rt, Math.round(ms)].slice(-30);
-            fin({ r: 'a', t: a, s: h.map(x => x.k + ': ' + x.t), ms, demo: S.cfg.demo })
+            const g = G1(S.lg), i = $('#qi'), q = i?.value.trim();
+            if(!g)return msg('เลือกเกมก่อนถามคำถาม');
+            if(!q)return msg('พิมพ์คำถามก่อนส่ง');
+            if(CHAT_REQUESTS.has(g.id))return;
+            const version=knowledgeVersion(g);
+            const cv=S.cv[g.id]=S.cv[g.id]||[],history=cv.filter(m=>!m.e&&(m.kb===version||(!m.kb&&!g.source_text))).slice(-20).map(m=>({role:m.r==='u'?'user':'assistant',content:m.t.slice(0,4000),source_ids:(m.sources||[]).map(s=>s.id),status:m.status||''}));
+            cv.push({r:'u',t:q,kb:version});i.value='';save();
+            const controller=new AbortController(),pending={controller,cv};CHAT_REQUESTS.set(g.id,pending);
+            const timeout=setTimeout(()=>controller.abort(),180000),t0=performance.now();draw();
+            const fin=m=>{
+                if(CHAT_REQUESTS.get(g.id)!==pending||S.cv[g.id]!==cv||!G1(g.id)||knowledgeVersion(G1(g.id))!==version)return;
+                cv.push({...m,kb:version});S.cv[g.id]=cv.slice(-30);CHAT_REQUESTS.delete(g.id);save();if(S.lg===g.id)draw();
+            };
+            try{
+                let result;
+                if(API_BASE){
+                    const response=await fetch(API_BASE+'/api/games/'+encodeURIComponent(g.id)+'/ask',{
+                        method:'POST',signal:controller.signal,
+                        headers:{'Content-Type':'application/json',...(ADMIN_TOKEN?{Authorization:'Bearer '+ADMIN_TOKEN}:{})},
+                        body:JSON.stringify({question:q,history,demo:!!S.cfg.demo})
+                    });
+                    const data=await response.json();
+                    if(!response.ok)throw new Error(typeof data.detail==='string'&&data.detail!=='Not Found'?data.detail:response.status===404?'ไม่พบ API ถามตอบหรือเกมนี้ กรุณารีสตาร์ต Backend แล้วเลือกเกมใหม่':'ระบบรับคำถามไม่ได้ กรุณาลองใหม่');
+                    if(data.game_id!==g.id||typeof data.answer!=='string'||!Array.isArray(data.sources))throw new Error('ข้อมูลคำตอบไม่ตรงกับเกมที่เลือก กรุณาลองใหม่');
+                    result=data;
+                }else{
+                    // Standalone pages retain the existing direct-Ollama mode.
+                    const prev=history.filter(m=>m.role==='user').slice(-2).map(m=>m.content).join(' ');
+                    let hits=retr(g,q);if(!hits.length&&prev&&/แล้ว|ล่ะ|นั้น|นี้|ต่อ|ตัวอย่าง|อธิบาย/.test(q))hits=retr(g,prev+' '+q);
+                    if(!hits.length)result={status:'insufficient',answer:'ไม่พบหลักฐานที่เพียงพอในฐานความรู้ของเกมนี้ กรุณาระบุหัวข้อหรือสถานการณ์เพิ่มเติม',sources:[]};
+                    else result={status:S.cfg.demo?'excerpt':'answered',answer:S.cfg.demo?'ข้อความจากฐานความรู้ (โหมดสาธิต):\n'+hits.map(h=>h.x).join('\n\n'):await llm(g,cv,hits,q),sources:hits.map((h,j)=>({id:'S'+(j+1),title:h.t,kind:h.k,content:h.x}))};
+                }
+                const ms=performance.now()-t0;S.rt=[...S.rt,Math.round(ms)].slice(-30);
+                fin({r:'a',t:result.answer,status:result.status,sources:result.sources,method:result.method,ms,demo:!!S.cfg.demo});
+            }catch(error){
+                const detail=error.name==='AbortError'?'AI ใช้เวลาตอบนานเกินไป กรุณาลองใหม่':error instanceof TypeError?'ติดต่อบริการถามตอบไม่ได้ ตรวจว่า Backend และ Ollama เปิดอยู่ แล้วลองใหม่':error.message;
+                fin({r:'a',e:1,status:'error',t:'ผู้ช่วย AI ตอบไม่ได้ในขณะนี้: '+detail});
+            }finally{clearTimeout(timeout);if(CHAT_REQUESTS.get(g.id)===pending){CHAT_REQUESTS.delete(g.id);if(S.lg===g.id)draw();}}
         }
 
         /* ข้อมูลผู้ใช้ ประวัติการดู ข้อเสนอแนะ */
@@ -954,8 +1015,8 @@
         }
 
 /* FR-6 ความคืบหน้า */
-function prog(){app(`<h1>ความคืบหน้าการเรียน</h1><div class="grid">${pub().map(g=>{const d=S.p[g.id]||[];return`<div class="card"><b>${g.e} ${E(g.n)}</b><div class="bar"><i style="width:${pc(g)}%"></i></div><span>${pc(g)==100?'เรียนครบแล้ว':`เรียนแล้ว ${dn(g)} จาก ${g.st.length} ขั้นตอน`}</span>
- <ul class="ck">${g.st.map((s,i)=>`<li>${d.includes(i)?'✔':'○'} ${E(s[0])}</li>`).join('')}</ul>
+function prog(){app(`<h1>ความคืบหน้าการเรียน</h1><div class="grid">${pub().map(g=>{const d=S.p[g.id]||[];return`<div class="card"><b>${E(g.n)}</b><div class="bar"><i style="width:${pc(g)}%"></i></div><span>${pc(g)==100?'เรียนครบแล้ว':`เรียนแล้ว ${dn(g)} จาก ${g.st.length} ขั้นตอน`}</span>
+ <ul class="ck">${g.st.map((s,i)=>`<li>${d.includes(i)?'เรียนแล้ว:':'ยังไม่เรียน:'} ${E(s[0])}</li>`).join('')}</ul>
  <span class="mut">${S.q[g.id]!=null?`ทดสอบสูงสุด ${S.q[g.id]} / ${g.qz.length}`:'ยังไม่ได้ทดสอบ'}</span>
  <a class="btn" href="#/${pc(g)==100?'quiz':'tut'}/${g.id}">${pc(g)==100?'ไปทดสอบ':dn(g)?'เรียนต่อ':'เริ่มเรียน'}</a></div>`}).join('')}</div>`)}
 
@@ -980,11 +1041,67 @@ async function importSeedGames(){
 }
 
 let GENERATED_GAME_DRAFT=null;
+function showGeneratedGameDraft(result){
+ GENERATED_GAME_DRAFT=result;
+ const preview=$('#gameDraftPreview');
+ preview.innerHTML=`<h3>ตรวจร่างเกมก่อนบันทึก</h3>
+  <p class="mut">AI สร้างฉบับร่างเท่านั้น ตรวจสอบและแก้ไขข้อมูลก่อนบันทึก เกมจะยังไม่เผยแพร่</p>
+  <p><span class="tag">${result.r.length} หัวข้อกฎ</span> <span class="tag">${result.st.length} บทเรียน</span> <span class="tag">${result.sit.length} สถานการณ์</span> <span class="tag">${result.qz.length} ข้อสอบ</span></p>
+  ${(result.generation_warnings||[]).map(w=>`<p role="status">${E(w)}</p>`).join('')}
+  ${!result.sit.length?'<p role="status">ยังไม่มีสถานการณ์ฝึก ตรวจว่าข้อความกติกาครบถ้วน แล้วใช้ส่วนสร้างโจทย์ด้วย AI หลังบันทึกเกมได้</p>':''}
+  <details open><summary>ตัวอย่างหน้ากฎ</summary>${result.r.map(r=>`<section class="card2 rule-section"><h3>${E(r[0])}</h3>${ruleText(r[1])}${r[2]?cr(r[2]):''}</section>`).join('')}</details>
+  ${practicePreview(result)}
+  <details><summary>แก้ไขข้อมูลฉบับร่าง (JSON)</summary><label>ข้อมูลเกมฉบับร่าง<textarea id="generatedGameJson" rows="18" spellcheck="false">${E(JSON.stringify(result,null,2),true)}</textarea></label></details>
+  <button class="btn pri" onclick="saveGeneratedGameDraft()">บันทึกเป็นฉบับร่าง</button>`;
+ msg('สร้างร่างเกมแล้ว กรุณาตรวจสอบข้อมูลก่อนบันทึก');
+}
+
+function practicePreview(result){
+ return ['sit','qz'].map(k=>`<div class="practice-preview"><h3>${k==='sit'?'สถานการณ์ฝึก':'ข้อสอบ'}</h3>${result[k].map((q,i)=>`<article class="card2"><b>${i+1}. ${E(q.c)}</b><ol>${q.o.map((o,j)=>`<li>${E(o)}${j===q.a?' (คำตอบที่ถูกต้อง)':''}</li>`).join('')}</ol><p class="mut">เฉลย: ${E(q.w)}</p></article>`).join('')||'<p class="mut">ยังไม่มีโจทย์</p>'}</div>`).join('');
+}
+let PRACTICE_DRAFT=null;
+async function generatePracticeDraft(){
+ const g=G1(V('practiceGame')),button=$('#generatePracticeButton'),preview=$('#practiceDraftPreview');
+ if(!g)return msg('เลือกเกมก่อน');
+ const source=V('practiceSource')||[...g.r,...g.st].map(r=>r[0]+'\n'+r[1]).join('\n\n');
+ if(source.length<50)return msg('กติกายังไม่เพียงพอ กรุณาวางข้อความคู่มือเพิ่มเติม');
+ PRACTICE_DRAFT=null;preview.innerHTML='';button.disabled=true;button.textContent='กำลังสร้างโจทย์...';
+ try{
+  const response=await fetch(API_BASE+'/api/admin/generate-practice',{
+   method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+ADMIN_TOKEN},
+   body:JSON.stringify({name:g.n,source})
+  });
+  const result=await response.json();
+  if(!response.ok)throw new Error(typeof result.detail==='string'?result.detail:`HTTP ${response.status}`);
+  if(!result.sit.length&&!result.qz.length){preview.innerHTML='<p role="status">ข้อมูลยังไม่พอสร้างโจทย์ที่มีเฉลยชัดเจน กรุณาวางข้อความจากคู่มือให้ครบแล้วลองใหม่</p>';return;}
+  PRACTICE_DRAFT={id:g.id};
+  preview.innerHTML=`<h3>ตรวจโจทย์สำหรับ ${E(g.n)}</h3><p>ตรวจคำตอบและเหตุผลเทียบคู่มือก่อนบันทึก โจทย์ใหม่จะเพิ่มต่อท้ายของเดิม</p>${practicePreview(result)}<details><summary>แก้ไขโจทย์ (JSON)</summary><label>โจทย์ฉบับร่าง<textarea id="practiceDraftJson" rows="14">${E(JSON.stringify(result,null,2),true)}</textarea></label></details><button class="btn pri" onclick="savePracticeDraft()">ตรวจสอบแล้ว และเพิ่มโจทย์</button>`;
+ }catch(e){preview.textContent='สร้างโจทย์ไม่สำเร็จ: '+e.message;}
+ finally{button.disabled=false;button.textContent='สร้างร่างโจทย์จากกติกา';}
+}
+async function savePracticeDraft(){
+ if(!PRACTICE_DRAFT)return;
+ try{
+  const result=JSON.parse(V('practiceDraftJson'));
+  if(!Array.isArray(result.sit)||!Array.isArray(result.qz))throw new Error('ต้องมีรายการ sit และ qz');
+  for(const q of [...result.sit,...result.qz]){
+   if(!q||typeof q.c!=='string'||!q.c.trim()||!Array.isArray(q.o)||q.o.length<2||!q.o.every(o=>typeof o==='string'&&o.trim())||!Number.isInteger(q.a)||q.a<0||q.a>=q.o.length||typeof q.w!=='string'||!q.w.trim())throw new Error('ตรวจโจทย์ ตัวเลือก ลำดับเฉลย และเหตุผลให้ครบ');
+  }
+  const g=G1(PRACTICE_DRAFT.id);
+  if(!g)throw new Error('ไม่พบเกมเดิม กรุณาโหลดหน้าใหม่');
+  await commitGame({...g,sit:[...g.sit,...result.sit],qz:[...g.qz,...result.qz]});
+  PRACTICE_DRAFT=null;admin();msg('เพิ่มโจทย์ให้เกมแล้ว');
+ }catch(e){msg('บันทึกโจทย์ไม่สำเร็จ: '+e.message);}
+}
 async function generateGameDraft(){
  const name=V('aiGameName'),source=V('aiGameSource');
  if(!name||source.length<50)return msg('ใส่ชื่อเกมและข้อความกติกาอย่างน้อย 50 ตัวอักษรก่อนสร้างร่าง');
- const button=$('#generateGameButton');
- button.disabled=true;button.textContent='AI กำลังอ่านกติกา...';
+ await submitGameDraft(name,source,$('#generateGameButton'));
+}
+async function submitGameDraft(name,source,button){
+ if(!name||source.length<50)return msg('ต้องมีชื่อเกมและข้อความกติกาอย่างน้อย 50 ตัวอักษร');
+ button.disabled=true;button.textContent='AI กำลังสร้างกฎและแบบฝึก...';
+ $('#gameDraftPreview').innerHTML='<p role="status">กำลังสร้างร่างเกมและตรวจรูปแบบคำตอบ หากข้อมูลไม่ครบระบบจะลองแก้คำตอบอีกหนึ่งครั้ง อาจใช้เวลาหลายนาที</p>';
  try{
   const response=await fetch(API_BASE+'/api/admin/generate-game',{
    method:'POST',
@@ -993,19 +1110,60 @@ async function generateGameDraft(){
   });
   const result=await response.json();
   if(!response.ok)throw new Error(result.detail||`HTTP ${response.status}`);
-  GENERATED_GAME_DRAFT=result;
-  const preview=$('#gameDraftPreview');
-  preview.innerHTML=`<h3>ตรวจร่างเกมก่อนบันทึก</h3>
-   <p class="mut">AI สร้างฉบับร่างเท่านั้น ตรวจสอบและแก้ไขข้อมูลก่อนบันทึก เกมจะยังไม่เผยแพร่</p>
-   <label>ข้อมูลเกมฉบับร่าง (JSON)<textarea id="generatedGameJson" rows="18" spellcheck="false">${E(JSON.stringify(result,null,2))}</textarea></label>
-   <button class="btn pri" onclick="saveGeneratedGameDraft()">บันทึกเป็นฉบับร่าง</button>`;
-  msg('AI สร้างร่างเกมแล้ว กรุณาตรวจสอบข้อมูลก่อนบันทึก');
+  showGeneratedGameDraft(result);
  }catch(e){
-  console.error('AI สร้างร่างเกมไม่สำเร็จ',e);
+  console.error('สร้างร่างเกมไม่สำเร็จ',e);
+  $('#gameDraftPreview').innerHTML=`<div class="card2" role="alert"><h3>สร้างร่างเกมไม่สำเร็จ</h3><p>${E(e.message)}</p><p class="mut">ข้อความคู่มือด้านบนยังอยู่ ตรวจข้อความแล้วกดสร้างร่างอีกครั้งได้</p></div>`;
   msg('สร้างร่างเกมไม่สำเร็จ: '+e.message);
  }finally{
-  if(button){button.disabled=false;button.textContent='ให้ AI สร้างร่างเกม';}
+  if(button){button.disabled=false;button.textContent=button.dataset.defaultText;}
  }
+}
+let PDF_OCR_ABORT=null;
+function cancelPdfRead(){PDF_OCR_ABORT?.abort();}
+async function generateGameDraftFromPdf(){
+ const file=$('#aiGamePdf').files[0];
+ if(!file)return msg('เลือกไฟล์ PDF ก่อนอ่านข้อความ');
+ if(!file.name.toLowerCase().endsWith('.pdf'))return msg('กรุณาเลือกไฟล์ PDF');
+ if(file.size>20*1024*1024)return msg('ไฟล์ PDF ต้องมีขนาดไม่เกิน 20 MB');
+ const button=$('#generatePdfGameButton');
+ const preview=$('#pdfTextPreview'),forceOcr=$('#forcePdfOcr').checked;
+ PDF_OCR_ABORT=new AbortController();
+ const signal=PDF_OCR_ABORT.signal;
+ button.disabled=true;button.textContent='กำลังอ่าน PDF...';
+ preview.innerHTML='<p id="pdfReadStatus" role="status" aria-live="polite">กำลังอ่านข้อความจาก PDF...</p><button class="btn" onclick="cancelPdfRead()">ยกเลิกการอ่าน</button>';
+ const progress=text=>{const status=$('#pdfReadStatus');if(status)status.textContent=text;};
+ try{
+  let text,usedOcr=forceOcr;
+  if(!forceOcr){
+   const form=new FormData();form.append('file',file);
+   const response=await fetch(API_BASE+'/api/admin/extract-pdf-text',{
+    method:'POST',headers:{Authorization:'Bearer '+ADMIN_TOKEN},body:form,signal
+   });
+   const result=await response.json();
+   if(response.ok)text=result.text;
+   else if(response.status===422&&typeof result.detail==='string'&&result.detail.includes('OCR'))usedOcr=true;
+   else throw new Error(typeof result.detail==='string'?result.detail:`HTTP ${response.status}`);
+  }
+  if(usedOcr)text=await readPdfWithOcr(file,{onProgress:progress,signal,forceOcr});
+  if(signal.aborted)throw new DOMException('ยกเลิกการอ่าน PDF แล้ว','AbortError');
+  preview.innerHTML=`<h3>ตรวจข้อความจาก PDF${usedOcr?' (OCR)':''}</h3>
+   <p class="mut">${usedOcr?'อ่านข้อความจากภาพด้วย OCR แล้ว ตัวอักษร ตัวเลข และลำดับข้อความอาจผิด โดยเฉพาะตารางหรือหลายคอลัมน์':'ระบบปรับรหัสอักขระฟอนต์ไทยที่รองรับแล้ว'} โปรดตรวจและแก้ข้อความเทียบคู่มือก่อนสร้างร่างเกม</p>
+   <label>ข้อความที่อ่านได้<textarea id="pdfCorrectedText" rows="14" maxlength="100000" spellcheck="false">${E(text,true)}</textarea></label>
+   <button id="generatePdfDraftButton" class="btn pri" data-default-text="สร้างร่างเกมจากข้อความนี้" onclick="generateGameDraftFromPdfText()">สร้างร่างเกมจากข้อความนี้</button>`;
+  msg('อ่านข้อความแล้ว กรุณาตรวจข้อความก่อนสร้างร่างเกม');
+ }catch(e){
+  const message=e.name==='AbortError'?'ยกเลิกการอ่าน PDF แล้ว':'อ่านข้อความ PDF ไม่สำเร็จ: '+e.message;
+  preview.textContent=message;msg(message);
+ }finally{
+  PDF_OCR_ABORT=null;
+  if(button){button.disabled=false;button.textContent=button.dataset.defaultText;}
+ }
+}
+async function generateGameDraftFromPdfText(){
+ const name=V('aiGameName'),source=V('pdfCorrectedText'),button=$('#generatePdfDraftButton');
+ if(!name||source.length<50)return msg('ใส่ชื่อเกมและตรวจข้อความจาก PDF ให้มีอย่างน้อย 50 ตัวอักษร');
+ await submitGameDraft(name,source,button);
 }
 async function saveGeneratedGameDraft(){
  let game;
@@ -1034,17 +1192,132 @@ async function saveGeneratedGameDraft(){
 }
 
 /* FR-7 จัดการเนื้อหา (ผู้ดูแล) */
-function admin(){
+function admin(selectedId){
  if(!S.ad)return app(`<h1>เข้าสู่ระบบผู้ดูแล</h1><div class="card2">${!API_BASE?'<p>หน้านี้ต้องเชื่อมต่อ Backend ก่อน จึงจะเข้าสู่ระบบและจัดการเกมได้</p>':''}<label>รหัสผ่านผู้ดูแล<input id="adminPassword" class="in" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginAdmin()"></label><button class="btn pri" onclick="loginAdmin()" ${!API_BASE?'disabled':''}>เข้าสู่ระบบ</button></div>`);
- const o=S.g.map(g=>`<option value="${g.id}">${E(g.n)}</option>`).join('');
+ const o=S.g.map(g=>`<option value="${g.id}" ${g.id===selectedId?'selected':''}>${E(g.n)}</option>`).join('');
  const storageStatus=API_BASE?(API_READY?'กำลังบันทึกข้อมูลเกมผ่าน Backend API และฐานข้อมูล SQLite ในเครื่อง':'เชื่อมต่อ Backend ไม่ได้: '+E(API_ERROR)):'ยังไม่ได้ตั้งค่า Backend กำลังใช้พื้นที่จัดเก็บของเบราว์เซอร์';
  app(`<h1>จัดการเนื้อหาเกม</h1><p class="mut">บทเรียนและกฎที่เผยแพร่แล้วจะเป็นฐานความรู้ (Knowledge Base) ของผู้ช่วย AI ด้วย</p><div class="card2">${storageStatus}</div><div class="row"><button class="btn" onclick="logoutAdmin()">ออกจากระบบผู้ดูแล</button><button class="btn pri" onclick="importSeedGames()" ${!API_BASE||!API_READY?'disabled':''}>นำเข้าเกมตัวอย่างลงฐานข้อมูล</button></div><p class="mut">เกมตัวอย่างจะถูกนำเข้าเฉพาะรายการที่ยังไม่มีในฐานข้อมูล เกมที่มีอยู่จะไม่ถูกเขียนทับ</p>
- <h2>สร้างเกมฉบับร่างด้วย AI</h2><div class="card2"><p>วางกติกาหรือข้อมูลจากคู่มือ AI จะจัดเป็นข้อมูลเกม บทเรียน กฎ และคำถามให้ตรวจสอบก่อนบันทึก โดยพยายามเก็บรายละเอียดและความสามารถของตัวละครทุกตัวตามต้นฉบับให้ครบ</p><label>ชื่อเกม<input id="aiGameName" class="in" maxlength="200"></label><label>ข้อความกติกา (อย่างน้อย 50 ตัวอักษร)<textarea id="aiGameSource" rows="8" maxlength="100000" placeholder="วางข้อความกติกาจากคู่มือเกมที่นี่"></textarea></label><button id="generateGameButton" class="btn pri" onclick="generateGameDraft()" ${!API_BASE||!API_READY?'disabled':''}>ให้ AI สร้างร่างเกม</button><div id="gameDraftPreview"></div></div>
- <h2>เกมทั้งหมด</h2>${S.g.map(g=>`<div class="card2"><b>${g.e} ${E(g.n)}</b> <span class="tag">${g.pub?'เผยแพร่แล้ว':'ฉบับร่าง'}</span><span class="tag">${g.st.length} ขั้นตอน</span><span class="tag">${g.sit.length} สถานการณ์</span><span class="tag">${g.qz.length} ข้อสอบ</span><span class="tag">${g.r.length} กฎ</span><div class="row"><button class="btn" onclick="tg('${g.id}')">${g.pub?'ยกเลิกการเผยแพร่':'ตรวจสอบแล้ว และเผยแพร่'}</button></div></div>`).join('')}
+ <section class="card2"><h2>ตรวจข้อมูลผู้ช่วย AI ทุกเกม</h2><p>ดูว่าเกมไหนยังขาดข้อความคู่มือหรือชื่อฉบับ ก่อนทดลองถามหรือพรีเซนต์</p><button class="btn" onclick="loadAssistantReadiness()">ตรวจข้อมูลทุกเกม</button><div id="assistantReadiness" aria-live="polite"></div></section>
+ <section class="card2"><h2>คู่มือสำหรับผู้ช่วย AI</h2><p>แนบคู่มือฉบับที่ใช้เล่นให้เกมเดิมได้โดยไม่ต้องสร้างเกมใหม่ ตรวจข้อความ OCR ก่อนบันทึก AI จะค้นคู่มือนี้ร่วมกับกฎและบทเรียน</p><label>เลือกเกม<select id="manualGame" onchange="showManualEditor()">${o}</select></label><label>ชื่อฉบับ / รุ่นเกม<input id="manualEdition" class="in" maxlength="200" value="${E((S.g.find(g=>g.id===selectedId)||S.g[0]||{}).edition||'')}"></label><label>ลิงก์แหล่งคู่มือ<input id="manualUrl" class="in" type="url" value="${E((S.g.find(g=>g.id===selectedId)||S.g[0]||{}).source_url||'')}"></label><label>อ่านคู่มือ PDF<input class="in" type="file" accept=".pdf,application/pdf" onchange="readManualPdf(this)" ${!API_READY||!S.g.length?'disabled':''}></label><label><input id="manualOcr" type="checkbox"> อ่านภาพด้วย OCR ทุกหน้า</label><label>ข้อความคู่มือ<textarea id="manualSource" rows="8" maxlength="100000">${E((S.g.find(g=>g.id===selectedId)||S.g[0]||{}).source_text||'',true)}</textarea></label><p id="manualStatus" role="status">ตรวจข้อความและฉบับคู่มือก่อนบันทึก</p><button class="btn pri" onclick="saveManual()" ${!S.g.length?'disabled':''}>บันทึกคู่มือสำหรับ AI</button></section>
+ <section class="card2"><h2>คำตอบที่ตรวจเทียบกฎแล้ว</h2><p>เพิ่มคำถามที่พบบ่อยพร้อมคำตอบที่ผู้ดูแลตรวจเอง ระบบตอบทันทีเมื่อคำถามตรงกัน ส่วนคำถามอื่นยังค้นกฎและใช้ AI ตามปกติ หากแก้กฎจนข้อความอ้างอิงหาย คำตอบนี้จะหยุดใช้อัตโนมัติ</p><label>เกม<select id="reviewGame" onchange="clearReviewSources()">${o}</select></label><button class="btn" onclick="loadReviewSources()">โหลดกฎสำหรับตรวจคำตอบ</button><label>หัวข้ออ้างอิง<select id="reviewSource" onchange="showReviewSource()"></select></label><label>ข้อความจากฐานความรู้<textarea id="reviewEvidence" rows="6" readonly></textarea></label><label>คำถาม<input id="reviewQuestion" class="in" maxlength="2000"></label><label>คำตอบ<textarea id="reviewAnswer" rows="3" maxlength="4000"></textarea></label><label>คัดข้อความอ้างอิงตรงจากกฎด้านบน<textarea id="reviewQuote" rows="3" maxlength="4000"></textarea></label><label>คำถามที่มีความหมายเดียวกัน (บรรทัดละหนึ่งคำถาม ไม่เกิน 10 ข้อ)<textarea id="reviewAliases" rows="3"></textarea></label><label><input id="reviewConfirmed" type="checkbox"> ตรวจคำตอบเทียบข้อความกฎและฉบับเกมแล้ว</label><button class="btn pri" onclick="saveReviewedAnswer()">บันทึกคำตอบที่ตรวจแล้ว</button></section>
+ <section id="gameImageManager" class="card2"><h2>จัดการรูปภาพเกม</h2><p>เลือกเกม แล้วอัปโหลดรูปปกหรือรูปตัวเกม ระบบบันทึกให้ทันที</p><label>เกมที่ต้องการใส่รูป<select id="imageGame" onchange="previewSelectedGameImage()">${o}</select></label><div id="selectedGameImage">${gameImage(S.g.find(g=>g.id===selectedId)||S.g[0]||{},'game-thumbnail')||'<p class="mut">เกมนี้ยังไม่มีรูปภาพ</p>'}</div><label>อัปโหลดรูปภาพ<input id="gameImageUpload" class="in" type="file" accept="image/jpeg,image/png,image/webp" onchange="uploadGameImage(V('imageGame'),this)" ${S.g.length?'':'disabled'}></label><p class="mut">รองรับ JPG, PNG และ WebP ขนาดไม่เกิน 2 MB</p></section>
+ <h2>สร้างเกมฉบับร่างด้วย AI</h2><div class="card2"><p>ใส่ชื่อเกมและอัปโหลด PDF ระบบจะอ่านข้อความและปรับรหัสอักขระฟอนต์ไทยที่พบบ่อย ตรวจข้อความก่อนให้ AI จัดเป็นบทเรียนและกฎ แล้วแก้ร่างเกมก่อนบันทึกได้ เกมจะยังไม่เผยแพร่</p><label>ชื่อเกม<input id="aiGameName" class="in" maxlength="200"></label><label>ไฟล์คู่มือเกม PDF<input id="aiGamePdf" class="in" type="file" accept=".pdf,application/pdf"></label><p class="mut">ขนาดไม่เกิน 20 MB และ 200 หน้า รองรับข้อความไม่เกิน 200 หน้า; PDF สแกนอ่านด้วย OCR ไทยและอังกฤษได้ครั้งละไม่เกิน 40 หน้า ต้องใช้อินเทอร์เน็ตโหลดเครื่องมือและข้อมูลภาษา โดย OCR ประมวลผลในเครื่อง</p><label><input id="forcePdfOcr" type="checkbox"> ใช้ OCR ทุกหน้า (เมื่อข้อความจาก PDF ขาดหายหรือผิดเพี้ยน)</label><button id="generatePdfGameButton" class="btn pri" data-default-text="อ่านข้อความ PDF และปรับอักขระ" onclick="generateGameDraftFromPdf()" ${!API_BASE||!API_READY?'disabled':''}>อ่านข้อความ PDF และปรับอักขระ</button><div id="pdfTextPreview"></div><details><summary>หรือวางข้อความกติกาเอง</summary><label>ข้อความกติกา<textarea id="aiGameSource" rows="8" maxlength="100000" placeholder="วางข้อความกติกาจากคู่มือเกมที่นี่"></textarea></label><button id="generateGameButton" class="btn" data-default-text="สร้างร่างจากข้อความ" onclick="generateGameDraft()" ${!API_BASE||!API_READY?'disabled':''}>สร้างร่างจากข้อความ</button></details><div id="gameDraftPreview"></div></div>
+ <h2>เกมทั้งหมด</h2>${S.g.map(g=>`<div class="card2"><b>${E(g.n)}</b> <span class="tag">${g.pub?'เผยแพร่แล้ว':'ฉบับร่าง'}</span><span class="tag">${g.st.length} ขั้นตอน</span><span class="tag">${g.sit.length} สถานการณ์</span><span class="tag">${g.qz.length} ข้อสอบ</span><span class="tag">${g.r.length} กฎ</span>${gameImage(g,'game-thumbnail')}<label>รูปปกหรือตัวเกม (JPG, PNG, WebP ไม่เกิน 2 MB)<input class="in" type="file" accept="image/jpeg,image/png,image/webp" onchange="uploadGameImage('${g.id}',this)"></label><div class="row"><button class="btn" onclick="tg('${g.id}')">${g.pub?'ยกเลิกการเผยแพร่':'ตรวจสอบแล้ว และเผยแพร่'}</button><button class="btn danger" onclick="deleteGame('${g.id}',this)">ลบเกม</button></div></div>`).join('')}
  <h2>เพิ่มเกมใหม่</h2><div class="card2"><label>ชื่อเกม<input id="gn" class="in"></label><label>คำอธิบายสั้น<input id="gd" class="in"></label><label>หมวดหมู่<select id="gc">${CATS.map(c=>`<option>${c[0]}</option>`).join('')}</select></label><label>จำนวนผู้เล่น<input id="gp" class="in" placeholder="2-4"></label><label>เวลาเล่น (นาที)<input id="gt" class="in" placeholder="30"></label><button class="btn pri" onclick="ag()">เพิ่มเกม</button></div>
  <h2>เพิ่มบทเรียนหรือกฎ</h2><div class="card2"><label>เกม<select id="cg">${o}</select></label><label>ประเภท<select id="ct"><option value="st">ขั้นตอนบทเรียน</option><option value="r">กฎสำหรับค้นหา</option></select></label><label>หัวข้อ<input id="ch" class="in"></label><label>เนื้อหา<textarea id="cx" rows="3"></textarea></label><button class="btn pri" onclick="ac()">บันทึกเนื้อหา</button></div>
- <h2>เพิ่มสถานการณ์หรือข้อสอบ</h2><div class="card2"><label>เกม<select id="sg">${o}</select></label><label>ใช้เป็น<select id="sk"><option value="sit">สถานการณ์ฝึก</option><option value="qz">ข้อสอบ</option></select></label><label>โจทย์<textarea id="sc" rows="2"></textarea></label><label>ตัวเลือก (บรรทัดละ 1 ข้อ)<textarea id="so" rows="3"></textarea></label><label>เฉลยคือข้อที่<input id="sa" class="in" type="number" min="1" value="1"></label><label>คำอธิบายเฉลย<input id="sw" class="in"></label><button class="btn pri" onclick="asit()">บันทึกโจทย์</button></div>`)}
+ <h2>สร้างโจทย์ด้วย AI ให้เกมที่มีอยู่</h2><div class="card2"><p>สร้างสถานการณ์และข้อสอบจากกฎที่บันทึกไว้ หรือวางข้อความคู่มือเพิ่มเติม แล้วตรวจร่างก่อนเพิ่มโจทย์</p><label>เกม<select id="practiceGame">${o}</select></label><label>ข้อความจากคู่มือเพิ่มเติม (ถ้าเว้นว่างจะใช้กฎและบทเรียนของเกม)<textarea id="practiceSource" rows="5" maxlength="100000"></textarea></label><button id="generatePracticeButton" class="btn pri" onclick="generatePracticeDraft()" ${!API_BASE||!API_READY||!S.g.length?'disabled':''}>สร้างร่างโจทย์จากกติกา</button><div id="practiceDraftPreview" aria-live="polite"></div></div>
+ <h2>เพิ่มสถานการณ์หรือข้อสอบด้วยตนเอง</h2><div class="card2"><label>เกม<select id="sg">${o}</select></label><label>ใช้เป็น<select id="sk"><option value="sit">สถานการณ์ฝึก</option><option value="qz">ข้อสอบ</option></select></label><label>โจทย์<textarea id="sc" rows="2"></textarea></label><label>ตัวเลือก (บรรทัดละ 1 ข้อ)<textarea id="so" rows="3"></textarea></label><label>เฉลยคือข้อที่<input id="sa" class="in" type="number" min="1" value="1"></label><label>คำอธิบายเฉลย<input id="sw" class="in"></label><button class="btn pri" onclick="asit()">บันทึกโจทย์</button></div>`)}
 const tg=async id=>{const g=G1(id),updated={...g,pub:g.pub?0:1};try{await commitGame(updated);admin();msg(updated.pub?'เผยแพร่เกมแล้ว':'ยกเลิกการเผยแพร่แล้ว')}catch(e){msg('บันทึกไม่สำเร็จ: '+e.message)}};
+function previewSelectedGameImage(){
+ const g=G1(V('imageGame'));
+ $('#selectedGameImage').innerHTML=gameImage(g||{},'game-thumbnail')||'<p class="mut">เกมนี้ยังไม่มีรูปภาพ</p>';
+ $('#gameImageUpload').value='';
+}
+function showManualEditor(){
+ const g=G1(V('manualGame'));if(!g)return;
+ $('#manualSource').value=g.source_text||'';
+ $('#manualUrl').value=g.source_url||'';
+ $('#manualEdition').value=g.edition||'';
+ $('#manualStatus').textContent=g.source_text?'มีข้อความคู่มือ '+g.source_text.length.toLocaleString()+' ตัวอักษร':'ยังไม่มีข้อความคู่มือ AI ใช้กฎและบทเรียนสรุปเท่านั้น';
+}
+async function loadAssistantReadiness(){
+ const panel=$('#assistantReadiness');if(!panel)return;
+ panel.textContent='กำลังตรวจข้อมูลทุกเกม...';
+ try{
+  const response=await fetch(API_BASE+'/api/admin/readiness',{headers:{Authorization:'Bearer '+ADMIN_TOKEN}});
+  const data=await response.json();if(!response.ok)throw new Error(typeof data.detail==='string'?data.detail:'ตรวจข้อมูลไม่ได้');
+  panel.innerHTML=`<p class="mut">${E(data.note)}</p>${data.games.map(g=>`<article class="card2"><b>${E(g.name)}</b><p>${g.rules} หัวข้อกฎ · ${g.reviewed_answers} คำตอบที่ตรวจแล้ว · ข้อความคู่มือ ${g.manual_characters.toLocaleString()} ตัวอักษร</p>${g.issues.length?`<ul>${g.issues.map(issue=>`<li>${E(issue)}</li>`).join('')}</ul>`:'<p>มีข้อมูลพื้นฐานสำหรับทดสอบคำถาม ควรตรวจคำตอบกับคู่มือก่อนสาธิต</p>'}</article>`).join('')}`;
+ }catch(error){panel.textContent=error.message;}
+}
+let REVIEW_SOURCES=[],REVIEW_GAME_ID='';
+function clearReviewSources(){REVIEW_SOURCES=[];REVIEW_GAME_ID='';$('#reviewSource').innerHTML='';$('#reviewEvidence').value='';$('#reviewConfirmed').checked=false;}
+async function loadReviewSources(){
+ const id=V('reviewGame'),panel=$('#reviewSource');if(!id)return;
+ clearReviewSources();
+ try{
+  const response=await fetch(API_BASE+'/api/admin/games/'+encodeURIComponent(id)+'/knowledge',{headers:{Authorization:'Bearer '+ADMIN_TOKEN}});
+  const data=await response.json();if(!response.ok)throw new Error(typeof data.detail==='string'?data.detail:'โหลดกฎไม่ได้');
+  if(V('reviewGame')!==id)return;
+  REVIEW_SOURCES=data.sources;REVIEW_GAME_ID=id;panel.innerHTML=REVIEW_SOURCES.map(source=>`<option value="${E(source.id)}">${E(source.kind)}: ${E(source.title)}</option>`).join('');showReviewSource();
+ }catch(error){msg(error.message);}
+}
+function showReviewSource(){const source=REVIEW_SOURCES.find(source=>source.id===V('reviewSource'));$('#reviewEvidence').value=source?.content||'';$('#reviewQuote').value='';$('#reviewConfirmed').checked=false;}
+async function saveReviewedAnswer(){
+ const g=G1(V('reviewGame')),q=V('reviewQuestion'),answer=V('reviewAnswer'),quote=V('reviewQuote'),source=REVIEW_SOURCES.find(source=>source.id===V('reviewSource'));
+ if(!g||REVIEW_GAME_ID!==g.id||q.length<5||answer.length<15||!quote||!source||!source.content.includes(quote))return msg('กรอกคำถาม คำตอบ และคัดข้อความอ้างอิงตรงจากกฎด้านบนให้ครบ');
+ if(!$('#reviewConfirmed').checked)return msg('ตรวจคำตอบและข้อความอ้างอิงก่อนบันทึก');
+ const entry={question:q,answer,quote,source_id:source.id,reviewed:true,aliases:V('reviewAliases').split('\n').map(text=>text.trim()).filter(Boolean).slice(0,10)};
+ const entries=(g.verified_qa||[]).filter(old=>old.question!==q);
+ try{await commitGame({...g,verified_qa:[...entries,entry]});admin(g.id);msg('บันทึกคำตอบที่ตรวจเทียบกฎแล้ว');}
+ catch(error){msg('บันทึกคำตอบไม่ได้: '+error.message);}
+}
+async function saveManual(){
+ const g=G1(V('manualGame')),source=V('manualSource'),url=V('manualUrl'),edition=V('manualEdition');
+ if(!g)return msg('เลือกเกมก่อน');
+ if(source.length<50||source.length>100000)return msg('ข้อความคู่มือต้องมี 50–100,000 ตัวอักษร');
+ if(url&&!/^https?:\/\/[^\s]+$/.test(url))return msg('ลิงก์คู่มือต้องเริ่มด้วย https:// หรือ http://');
+ try{await commitGame({...g,source_text:source,source_url:url,edition});admin(g.id);msg('บันทึกคู่มือแล้ว AI จะค้นจากข้อความนี้ในการถามครั้งต่อไป');}
+ catch(error){msg('บันทึกคู่มือไม่ได้: '+error.message);}
+}
+async function readManualPdf(input){
+ const file=input.files[0],id=V('manualGame'),status=$('#manualStatus');if(!file||!id)return;
+ if(!file.name.toLowerCase().endsWith('.pdf')||file.size>20*1024*1024){input.value='';return msg('เลือก PDF ไม่เกิน 20 MB');}
+ input.disabled=true;status.textContent='กำลังอ่านคู่มือ...';
+ try{
+  let text,ocr=$('#manualOcr').checked;
+  if(!ocr){
+   const form=new FormData();form.append('file',file);
+   const response=await fetch(API_BASE+'/api/admin/extract-pdf-text',{method:'POST',headers:{Authorization:'Bearer '+ADMIN_TOKEN},body:form});
+   const data=await response.json();
+   if(response.ok)text=data.text;
+   else if(response.status===422&&typeof data.detail==='string'&&data.detail.includes('OCR'))ocr=true;
+   else throw new Error(typeof data.detail==='string'?data.detail:'อ่าน PDF ไม่ได้');
+  }
+  if(ocr)text=await readPdfWithOcr(file,{forceOcr:true,onProgress:message=>status.textContent=message});
+  if(V('manualGame')!==id)throw new Error('เลือกเกมเปลี่ยนไปแล้ว กรุณาเลือกไฟล์อีกครั้งสำหรับเกมที่ต้องการ');
+  $('#manualSource').value=text;status.textContent='อ่านแล้ว '+text.length.toLocaleString()+' ตัวอักษร ตรวจข้อความและฉบับคู่มือก่อนกดบันทึก';
+ }catch(error){status.textContent='อ่านคู่มือไม่สำเร็จ: '+error.message;}
+ finally{input.disabled=false;input.value='';}
+}
+async function uploadGameImage(id,input){
+ if(!S.ad)return msg('กรุณาเข้าสู่ระบบผู้ดูแลก่อน');
+ const file=input.files[0];if(!file)return;
+ if(!['image/png','image/jpeg','image/webp'].includes(file.type)){input.value='';return msg('เลือกรูป JPG, PNG หรือ WebP');}
+ if(file.size>2*1024*1024){input.value='';return msg('รูปต้องมีขนาดไม่เกิน 2 MB');}
+ input.disabled=true;
+ try{
+  const bitmap=await createImageBitmap(file);bitmap.close();
+  const image=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(new Error('อ่านไฟล์รูปไม่ได้'));reader.readAsDataURL(file);});
+  const g=G1(id);if(!g)throw new Error('ไม่พบเกมที่ต้องการเพิ่มรูป');
+  await commitGame({...g,image});admin(id);msg('บันทึกรูปเกมแล้ว');
+ }catch(e){msg('เพิ่มรูปไม่สำเร็จ: '+e.message);}
+ finally{input.disabled=false;input.value='';}
+}
+async function deleteGame(id,button){
+ if(!S.ad)return msg('กรุณาเข้าสู่ระบบผู้ดูแลก่อน');
+ const g=G1(id);if(!g)return;
+ if(!confirm(`ลบเกม “${g.n}” หรือไม่?\nบทเรียน กฎ สถานการณ์ และข้อสอบของเกมนี้จะถูกลบถาวร และไม่สามารถกู้คืนได้`))return;
+ if(button){button.disabled=true;button.textContent='กำลังลบ...';}
+ try{
+  if(API_BASE){
+   if(!API_READY)throw new Error('ยังเชื่อมต่อ Backend ไม่ได้ กรุณาลองใหม่');
+   const response=await fetch(API_BASE+'/api/games/'+encodeURIComponent(id),{
+    method:'DELETE',headers:{Authorization:'Bearer '+ADMIN_TOKEN}
+   });
+   if(response.status===401){S.ad=0;ADMIN_TOKEN='';sessionStorage.removeItem('bgtAdminToken');admin();throw new Error('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่');}
+   if(!response.ok&&response.status!==404){
+    const result=await response.json();throw new Error(typeof result.detail==='string'?result.detail:`HTTP ${response.status}`);
+   }
+  }
+  S.g=S.g.filter(x=>x.id!==id);
+  S.h=S.h.filter(x=>x!==id);
+  delete S.p[id];delete S.q[id];delete S.cv[id];
+  if(S.lg===id)S.lg='';
+  if(PRACTICE_DRAFT?.id===id)PRACTICE_DRAFT=null;
+  save();admin();msg('ลบเกม “'+g.n+'” แล้ว');
+ }catch(e){msg('ลบเกมไม่สำเร็จ: '+e.message);}
+ finally{if(button){button.disabled=false;button.textContent='ลบเกม';}}
+}
 async function ag(){const n=V('gn'),d=V('gd');if(!n||!d)return msg('กรอกชื่อเกมและคำอธิบายก่อนบันทึก');
  const game={id:'g'+Date.now(),n,e:'🎲',pl:V('gp')||'-',t:V('gt')||'-',d,pub:0,c:[V('gc')],lv:'เริ่มต้นง่าย',st:[],sit:[],qz:[],r:[]};
  try{await commitGame(game);admin();msg('เพิ่มเกมแล้ว สถานะ ฉบับร่าง')}catch(e){msg('เพิ่มเกมไม่สำเร็จ: '+e.message)}}
