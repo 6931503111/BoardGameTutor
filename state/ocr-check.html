@@ -1,0 +1,38 @@
+<!doctype html><html lang="th"><meta charset="utf-8"><title>ทดสอบ OCR ในเครื่อง</title>
+<style>body{font:18px/1.8 system-ui;max-width:900px;margin:40px auto;padding:20px}button{padding:12px}pre{white-space:pre-wrap}</style>
+<h1>ทดสอบ OCR ภาษาไทยและอังกฤษ</h1>
+<p>ใช้เอกสารตัวอย่างในโปรเจกต์ 2 หน้า ทดสอบการเรนเดอร์ PDF และอ่านภาพจริงในเบราว์เซอร์</p>
+<button id="start">เริ่มทดสอบ</button><button id="thai">ทดสอบอักษรไทย</button><p id="status" role="status"></p><pre id="output"></pre>
+<script src="/Code/pdf-ocr.js"></script>
+<script>
+document.getElementById('start').onclick=async function(){
+ this.disabled=true;
+ const status=document.getElementById('status');
+ try{
+  const response=await fetch('/Doc/M1-Charter-Phompen%20Duke%20(1).pdf');
+  if(!response.ok)throw new Error('โหลดเอกสารทดสอบไม่ได้');
+  const file=new File([await response.blob()],'sample.pdf',{type:'application/pdf'});
+  const text=await readPdfWithOcr(file,{forceOcr:true,onProgress:t=>status.textContent=t});
+  document.getElementById('output').textContent=text;
+  status.textContent='สำเร็จ — อ่านได้ '+text.length+' ตัวอักษร';
+ }catch(error){status.textContent='ผิดพลาด: '+error.message;}
+ finally{this.disabled=false;}
+};
+document.getElementById('thai').onclick=async function(){
+ this.disabled=true;let worker;
+ const status=document.getElementById('status');
+ try{
+  status.textContent='กำลังอ่านภาพอักษรไทย...';
+  const canvas=document.createElement('canvas');canvas.width=1500;canvas.height=400;
+  const ctx=canvas.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,1500,400);
+  ctx.fillStyle='black';ctx.font='42px Tahoma';
+  ctx.fillText('ผู้เล่นทุกคนได้รับการ์ดคนละหนึ่งใบ',50,100);
+  ctx.fillText('เมื่อจบเทิร์น ให้จั่วการ์ดจากกองกลาง',50,200);
+  worker=await Tesseract.createWorker(['tha','eng'],1);
+  const result=await worker.recognize(canvas);
+  document.getElementById('output').textContent=result.data.text;
+  status.textContent=result.data.text.includes('ผู้เล่น')?'สำเร็จ — OCR อ่านข้อความภาษาไทยได้':'ตรวจผลภาษาไทยด้วยตนเอง';
+ }catch(error){status.textContent='ผิดพลาด: '+error.message;}
+ finally{if(worker)await worker.terminate();this.disabled=false;}
+};
+</script></html>
