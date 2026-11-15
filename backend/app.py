@@ -14,6 +14,7 @@ from typing import Any
 import httpx
 from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pypdf import PdfReader
 from pypdf.errors import PdfReadError
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
@@ -882,3 +883,6 @@ def delete_game(game_id: str, _: str = Depends(require_admin)) -> dict[str, str]
             if result.rowcount == 0:
                 raise HTTPException(status_code=404, detail="ไม่พบเกมที่ต้องการลบ")
     return {"deleted_id": game_id}
+
+
+app.mount("/", StaticFiles(directory=BASE_DIR.parent / "Code", html=True), name="frontend")
