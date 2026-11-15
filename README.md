@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
-# BoardGameTutor
-=======
 # BoardGameTutor
 
 ย้ายไปเครื่องเพื่อนที่เป็น Windows ได้ตาม [คู่มือติดตั้ง](Doc/INSTALL_WINDOWS.md) แพ็กปัจจุบันรวมฐานข้อมูลเกมและฐานความรู้แล้ว ให้สร้าง `.venv` ใหม่บนเครื่องปลายทาง ติดตั้ง Ollama/โมเดล และเปิดผ่าน `Start-BoardGameTutor.cmd` สร้าง ZIP จากโค้ดกับ snapshot ฐานข้อมูลที่สอดคล้องกันได้ด้วย `python scripts/build_transfer.py` โดยไม่รวม `.venv`, ไฟล์โมเดล หรือประวัติแชตในเบราว์เซอร์
@@ -134,4 +131,3 @@ python -m scripts.prepare_assistant --apply
 - GitHub Pages ยังคงใช้พื้นที่จัดเก็บของเบราว์เซอร์ จนกว่าจะนำ Backend ไปโฮสต์และกำหนด URL API ให้หน้าเว็บ
 - API เขียนเกมต้องเข้าสู่ระบบผู้ดูแลก่อน รหัสผ่านมาจาก `BGT_ADMIN_PASSWORD`; token มีอายุ 8 ชั่วโมงและถูกยกเลิกเมื่อ Backend รีสตาร์ต
 - ระบบนี้ยังไม่มี rate limiting, HTTPS หรือระบบจัดการผู้ดูแลหลายบัญชี จึงตั้งใจให้รันบน `127.0.0.1` เพื่อพัฒนาในเครื่องเท่านั้น **อย่าเปิด Backend สู่เครือข่ายสาธารณะก่อนตั้ง HTTPS, rate limiting และมาตรการ production เพิ่มเติม**
->>>>>>> Stashed changes

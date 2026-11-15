@@ -1,0 +1,170 @@
+[
+  {
+    "game": "Werewolf",
+    "game_id": "ww",
+    "question": "ผู้หยั่งรู้ดูได้กี่คนต่อคืน",
+    "http": 200,
+    "status": "answered",
+    "answer": "ผู้หยั่งรู้เลือกตรวจผู้เล่นได้ 1 คนต่อคืน ว่าเป็นหมาป่าหรือไม่ ตามกติกาพื้นฐานที่ใช้ในระบบ",
+    "source_ids": [
+      "R3"
+    ],
+    "expected_pattern": "1|หนึ่ง",
+    "text_check": true,
+    "seconds": 0.03
+  },
+  {
+    "game": "Werewolf",
+    "game_id": "ww",
+    "question": "หมาป่าเหลือ 2 คน ชาวบ้านเหลือ 2 คน ฝ่ายไหนชนะ",
+    "http": 200,
+    "status": "answered",
+    "answer": "ฝ่ายหมาป่าชนะตามกติกาพื้นฐานในระบบ เพราะจำนวนหมาป่าเท่ากับจำนวนชาวบ้านแล้ว",
+    "source_ids": [
+      "R5"
+    ],
+    "expected_pattern": "^(?:ฝ่าย)?หมาป่า.{0,25}ชนะ",
+    "text_check": true,
+    "seconds": 0.0
+  },
+  {
+    "game": "Exploding Kittens",
+    "game_id": "ek",
+    "question": "Nope ใช้ยกเลิก Defuse ได้ไหม",
+    "http": 200,
+    "status": "answered",
+    "answer": "ไม่ได้ครับ Nope ยกเลิก Defuse ไม่ได้ กฎยกเว้นทั้ง Defuse และ Exploding Kitten",
+    "source_ids": [
+      "R1"
+    ],
+    "expected_pattern": "ไม่ได้|ไม่สามารถ|ยกเว้น",
+    "text_check": true,
+    "seconds": 0.0
+  },
+  {
+    "game": "Exploding Kittens",
+    "game_id": "ek",
+    "question": "โดน Attack แล้วใช้ Skip หนึ่งใบ ยังต้องเล่นอีกกี่ตา",
+    "http": 200,
+    "status": "answered",
+    "answer": "ถ้าต้องเล่น 2 ตาจาก Attack และยังไม่ได้เล่นไปก่อน ใช้ Skip 1 ใบจบได้เพียงหนึ่งตา จึงเหลืออีก 1 ตา",
+    "source_ids": [
+      "M15"
+    ],
+    "expected_pattern": "1|หนึ่ง",
+    "text_check": true,
+    "seconds": 0.0
+  },
+  {
+    "game": "Mogel Motte",
+    "game_id": "mm",
+    "question": "แมลงยามสามารถโกงได้ไหม",
+    "http": 200,
+    "status": "answered",
+    "answer": "ไม่ได้ครับ ผู้ถือแมลงยามห้ามโกงเอง และระหว่างตัดสินการจับโกง ผู้เล่นอื่นก็ห้ามโกงเช่นกัน",
+    "source_ids": [
+      "R3"
+    ],
+    "expected_pattern": "ไม่ได้|ห้าม|ไม่สามารถ",
+    "text_check": true,
+    "seconds": 0.0
+  },
+  {
+    "game": "Mogel Motte",
+    "game_id": "mm",
+    "question": "ไพ่บนกองเป็นเลข 5 ลงเลขอะไรได้บ้าง",
+    "http": 200,
+    "status": "answered",
+    "answer": "ลงเลข 4 หรือเลข 1 ได้ เพราะต้องลงเลขที่ต่างกัน 1 และเลข 5 เชื่อมกับเลข 1 ได้",
+    "source_ids": [
+      "R1"
+    ],
+    "expected_pattern": "1|หนึ่ง",
+    "text_check": true,
+    "seconds": 0.0
+  },
+  {
+    "game": "Spyfall",
+    "game_id": "sf",
+    "question": "ถามคนที่เพิ่งถามเรากลับทันทีได้ไหม",
+    "http": 200,
+    "status": "answered",
+    "answer": "ไม่ได้ครับ หลังตอบคำถาม คุณต้องเลือกถามผู้เล่นคนอื่น ห้ามถามกลับคนที่เพิ่งถามคุณทันที",
+    "source_ids": [
+      "M16"
+    ],
+    "expected_pattern": "ไม่ได้|ห้าม|ไม่สามารถ",
+    "text_check": true,
+    "seconds": 0.0
+  },
+  {
+    "game": "Spyfall",
+    "game_id": "sf",
+    "question": "สายลับเดาสถานที่ผิดใครชนะ",
+    "http": 200,
+    "status": "answered",
+    "answer": "เมื่อสายลับหยุดเกมแล้วเดาสถานที่ผิด ผู้เล่นคนอื่นที่ไม่ใช่สายลับชนะรอบนั้น",
+    "source_ids": [
+      "M20"
+    ],
+    "expected_pattern": "ไม่ใช่สายลับ|คนอื่น|ชาว|ผู้เล่นอื่น|Non",
+    "text_check": true,
+    "seconds": 0.0
+  },
+  {
+    "game": "คำต้องห้าม",
+    "game_id": "tb",
+    "question": "หลุดคำต้องห้ามแล้วยังพูดต่อได้ไหม",
+    "http": 200,
+    "status": "answered",
+    "answer": "เมื่อพูดคำต้องห้ามของตนเอง ให้เอาการ์ดออกและหยุดพูดจนจบรอบ ยังช่วยสังเกตจับผิดได้ แต่ไม่มีสิทธิ์พูดก่อนจบรอบ",
+    "source_ids": [
+      "M11"
+    ],
+    "expected_pattern": "ไม่ได้|เงียบ|หยุดพูด|ห้าม",
+    "text_check": true,
+    "seconds": 0.0
+  },
+  {
+    "game": "คำต้องห้าม",
+    "game_id": "tb",
+    "question": "หมดเวลาแล้วทายคำได้กี่ครั้ง",
+    "http": 200,
+    "status": "answered",
+    "answer": "ทายคำได้หนึ่งครั้งต่อรอบเมื่อถึงขั้นทายคำตอนหมดเวลา ตามรูปแบบเดี่ยวหรือทีมที่เลือกเล่น",
+    "source_ids": [
+      "M10"
+    ],
+    "expected_pattern": "1|หนึ่ง",
+    "text_check": true,
+    "seconds": 0.0
+  },
+  {
+    "game": "For sale",
+    "game_id": "g2dc5adacbfa969b8",
+    "question": "ล่าสุดประมูล 4000 เราเสนอ 3000 ได้ไหม",
+    "http": 200,
+    "status": "answered",
+    "answer": "ไม่ได้ครับ ราคาเสนอ 3,000 น้อยกว่าราคาล่าสุด 4,000 แต่กฎกำหนดให้เสนอมากกว่าราคาล่าสุด\nกฎที่ใช้: ผู้เล่นต้องเสนอเงินมากกว่าราคาประมูลล่าสุด หรือบอกผ่าน",
+    "source_ids": [
+      "R1"
+    ],
+    "expected_pattern": "ไม่ได้",
+    "text_check": true,
+    "seconds": 0.01
+  },
+  {
+    "game": "For sale",
+    "game_id": "g2dc5adacbfa969b8",
+    "question": "บอกผ่านประมูลจะได้เงินคืนเท่าไร",
+    "http": 200,
+    "status": "answered",
+    "answer": "ได้ธนบัตรที่ลงไว้คืนครึ่งหนึ่ง โดยปัดจำนวนธนบัตรลง เช่น ลงไป 5 ใบจะได้คืน 2 ใบ พร้อมรับบ้านมูลค่าต่ำสุดที่ยังเหลือ และออกจากการประมูลรอบนั้น",
+    "source_ids": [
+      "R1"
+    ],
+    "expected_pattern": "ครึ่ง|half",
+    "text_check": true,
+    "seconds": 0.0
+  }
+]

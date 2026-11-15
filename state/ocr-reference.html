@@ -1,0 +1,11 @@
+<!doctype html><html lang="th"><meta charset="utf-8"><title>ตรวจข้อความคู่มืออ้างอิง</title>
+<style>body{font:18px/1.7 system-ui;max-width:960px;margin:30px auto}textarea{width:100%;height:600px}</style>
+<h1>อ่านข้อความคู่มือคำต้องห้าม</h1><button id="start">อ่าน OCR</button><p id="status"></p><textarea id="result"></textarea>
+<script src="/Code/pdf-ocr.js"></script><script>
+document.getElementById('start').onclick=async function(){this.disabled=true;try{
+const response=await fetch('/backend/data/reference_manuals/tb.pdf');
+const file=new File([await response.blob()],'tb.pdf',{type:'application/pdf'});
+const text=await readPdfWithOcr(file,{forceOcr:true,onProgress:t=>document.getElementById('status').textContent=t});
+document.getElementById('result').value=text;document.getElementById('status').textContent='อ่านแล้ว '+text.length+' ตัวอักษร';
+}catch(e){document.getElementById('status').textContent=e.message;}finally{this.disabled=false;}};
+</script></html>
