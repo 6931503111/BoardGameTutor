@@ -683,7 +683,7 @@
         const $ = s => document.querySelector(s), A = $('#app');
         const withoutEmoji = s => String(s).replace(/([0-9#*])\uFE0F?\u20E3/g, '$1').replace(/[\p{Extended_Pictographic}\p{Regional_Indicator}\p{Emoji_Modifier}\uFE0F\u200D]/gu, '');
         const E = (s, preserveEmoji = false) => (preserveEmoji ? String(s) : withoutEmoji(s)).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-        const API_BASE = window.BGT_API_BASE || (['localhost', '127.0.0.1'].includes(location.hostname) ? 'http://127.0.0.1:8000' : '');
+        const API_BASE = window.BGT_API_BASE || (['localhost', '127.0.0.1'].includes(location.hostname) ? 'http://127.0.0.1:8000' : location.hostname.endsWith('.trycloudflare.com') ? location.origin : '');
         let API_READY = !API_BASE, API_ERROR = '';
         let S = { p: {}, q: {}, g: SEED, ad: 0, u: 'ผู้เล่น', h: [], fb: [], cv: {}, rt: [], lg: '', cfg: { url: 'http://localhost:11434', m: 'qwen3:1.7b', demo: 0 } }, T = {}, P = {}, Q = {};
         let ADMIN_TOKEN = sessionStorage.getItem('bgtAdminToken') || '';

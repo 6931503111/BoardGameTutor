@@ -58,6 +58,15 @@ class GameApiTests(unittest.TestCase):
             "r": [["การเริ่มเกม", "สับไพ่ก่อนเริ่ม"]],
         }
 
+    def test_serves_frontend_and_ocr_asset(self) -> None:
+        page = self.client.get("/")
+        asset = self.client.get("/pdf-ocr.js")
+
+        self.assertEqual(page.status_code, 200)
+        self.assertIn("<title>Board Game Tutor</title>", page.text)
+        self.assertEqual(asset.status_code, 200)
+        self.assertIn("async", asset.text)
+
     def test_create_and_read_game(self) -> None:
         game = self.sample_game()
         response = self.client.put(
