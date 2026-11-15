@@ -1,4 +1,4 @@
-param([switch]$OpenBrowser)
+﻿param([switch]$OpenBrowser)
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $statePath = Join-Path $projectRoot 'state'
@@ -10,6 +10,8 @@ function Test-ServiceUrl([string]$Url) {
 }
 
 $pythonCandidates = @()
+$projectPython = Join-Path $projectRoot '.venv\Scripts\python.exe'
+if (Test-Path -LiteralPath $projectPython) { $pythonCandidates += $projectPython }
 $pythonCommand = Get-Command python -ErrorAction SilentlyContinue
 if ($pythonCommand) { $pythonCandidates += $pythonCommand.Source }
 $pythonCandidates += Get-ChildItem -Path (Join-Path $env:LOCALAPPDATA 'Python') -Directory -ErrorAction SilentlyContinue | ForEach-Object { Join-Path $_.FullName 'python.exe' } | Where-Object { Test-Path -LiteralPath $_ }
@@ -25,6 +27,7 @@ if (-not (Test-ServiceUrl 'http://127.0.0.1:11434/api/version')) {
     Start-Process -FilePath $ollamaPath -ArgumentList 'serve' -WindowStyle Hidden
 }
 if (-not $env:BGT_ASSISTANT_MODEL) { $env:BGT_ASSISTANT_MODEL='qwen3.5:4b' }
+if (-not $env:BGT_ASSISTANT_NUM_GPU) { $env:BGT_ASSISTANT_NUM_GPU='0' }
 if (-not (Test-ServiceUrl 'http://127.0.0.1:8000/api/health')) {
     if (-not $env:BGT_ADMIN_PASSWORD) {
         $secret = Read-Host 'ตั้งรหัสผ่านผู้ดูแลสำหรับการเปิด Backend ครั้งนี้' -AsSecureString

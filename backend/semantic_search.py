@@ -73,6 +73,8 @@ async def hybrid_retrieve(sources: list[RuleSource], question: str, limit: int =
         return lexical
     # Passage windows are used for scoring only; cited evidence stays complete.
     windows = [(source, source.content[i:i+1100]) for source in sources for i in range(0, len(source.content), 950)]
+    windows += [(source, source.search_text[i:i+1100]) for source in sources
+                for i in range(0, len(source.search_text), 950)]
     texts = ['task: search result | query: ' + question]
     texts += ['title: ' + source.title + ' | text: ' + text for source, text in windows]
     try:

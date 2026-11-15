@@ -559,6 +559,9 @@
 
         .bb small { display: block; margin-top: 8px }
         .src details { margin: 8px 0; line-height: 1.7 }
+        details.src > summary { cursor: pointer; line-height: 1.7 }
+        .src section { margin-top: 12px; line-height: 1.7 }
+        .src section + section { border-top: 1px solid var(--line); padding-top: 12px }
 
         .chips {
             margin: 6px 0 10px
@@ -921,11 +924,11 @@
         async function llm(g, cv, hits, q) {
             const c = new AbortController(), tm = setTimeout(() => c.abort(), 90000);
             const ctx = hits.map((h, i) => `[${i + 1}] ${h.k}: ${h.t} - ${h.x}`).join('\n');
-            const hist = cv.slice(-9, -1).filter(m => !m.e).map(m => ({ role: m.r == 'u' ? 'user' : 'assistant', content: m.t }));
+            const hist = cv.slice(-9, -1).filter(m => !m.e && !['excerpt','insufficient'].includes(m.status)).map(m => ({ role: m.r == 'u' ? 'user' : 'assistant', content: m.t }));
             try {
                 const r = await fetch(S.cfg.url.replace(/\/$/, '') + '/api/chat', {
                     method: 'POST', signal: c.signal, headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ model: S.cfg.m, stream: false, messages: [{ role: 'system', content: `คุณคือผู้ช่วยอธิบายกฎบอร์ดเกม ${g.n} ตอบเป็นภาษาไทย สั้น ชัดเจน ใช้เฉพาะข้อมูลอ้างอิงที่ให้ ถ้าข้อมูลไม่พอให้บอกว่าไม่แน่ใจ ห้ามเดา` }, ...hist, { role: 'user', content: `ข้อมูลอ้างอิง:\n${ctx}\n\nคำถาม: ${q}` }] })
+                    body: JSON.stringify({ model: S.cfg.m, stream: false, think: false, options: {temperature: 0}, messages: [{ role: 'system', content: `คุณคือผู้ช่วยอธิบายกฎบอร์ดเกม ${g.n} ตอบเป็นภาษาไทย สั้น ชัดเจน ใช้เฉพาะข้อมูลอ้างอิงที่ให้ ห้ามเดา ตอบการกระทำ เงื่อนไขปฏิเสธ และช่วงเวลาในคำถามล่าสุด ประวัติช่วยตีความเท่านั้น ไม่ใช่หลักฐาน หากกำกวมให้ถามรายละเอียดจำเป็นหนึ่งประเด็น หากเข้าใจแล้วแต่กฎไม่ระบุให้บอกว่ายังยืนยันไม่ได้ ห้ามยกคำตอบเก่ามาตอบสถานการณ์ใหม่` }, ...hist, { role: 'user', content: `ข้อมูลอ้างอิง:\n${ctx}\n\nคำถามล่าสุด: ${q}` }] })
                 });
                 if (!r.ok) throw 0; const j = await r.json(); return j.message.content.trim()
             } finally { clearTimeout(tm) }
@@ -936,7 +939,21 @@
             return (hash>>>0).toString(16);
         }
         const CHAT_REQUESTS = new Map();
-        const bub = m => `<div class="bb ${m.r}${m.e ? ' err' : ''}">${m.method==='reviewed'?'<small class="mut">คำตอบตรวจเทียบกฎแล้ว</small>':''}${m.status==='clarify'?'<b>ขอรายละเอียดเพิ่มเติม</b><br>':m.status==='excerpt'?'<b>ข้อความกฎที่ค้นพบ</b><br>':m.status==='partial'?'<b>คำตอบและข้อจำกัด</b><br>':m.status==='insufficient'?'<b>ข้อมูลยังไม่เพียงพอ</b><br>':''}${E(m.t).replace(/\n/g, '<br>')}${m.sources?.length ? `<div class="src">${m.sources.map(x=>`<details><summary>อ้างอิง ${E(x.id)} · ${E(x.kind)}: ${E(x.title)}</summary>${x.edition?`<p class="mut">ฉบับ: ${E(x.edition)}</p>`:''}${ruleText(x.content)}${/^https?:\/\/[^\s]+$/.test(x.url||'')?`<a href="${E(x.url)}" target="_blank" rel="noopener noreferrer">เปิดแหล่งคู่มือ</a>`:''}</details>`).join('')}</div>` : m.s?.length ? `<div class="src">${m.s.map(x => `<span class="tag">แหล่งอ้างอิง: ${E(x)}</span>`).join('')}</div>` : ''}${m.ms ? `<small class="mut">ตอบใน ${(m.ms / 1000).toFixed(1)} วินาที${m.demo ? ' · โหมดสาธิต ไม่ผ่านโมเดล' : ''}</small>` : ''}</div>`;
+        function chatAnswerText(m) {
+            if(m.r==='a' && m.e && /ใช้เวลานานเกินไป/.test(m.t) && /แบ่ง(?:ข้อความ)?คู่มือ/.test(m.t))
+                return 'ผู้ช่วยตรวจคำตอบไม่ทันในครั้งนั้น กรุณาลองถามใหม่อีกครั้ง';
+            if(m.r==='a' && m.status==='excerpt' && !m.demo && m.t.startsWith('พบกฎที่เกี่ยวข้องดังนี้:'))
+                return 'ยังยืนยันคำตอบของกรณีที่ถามไม่ได้ครับ สามารถเปิดดูกฎที่เกี่ยวข้องในอ้างอิงด้านล่างเพื่อตรวจเงื่อนไขเพิ่มเติม';
+            return m.t;
+        }
+        function sourceReferences(sources) {
+            if (!sources?.length) return '';
+            return `<details class="src"><summary>ดูกฎอ้างอิง (${sources.length} แหล่ง)</summary>${sources.map(x=>`<section><b>${E(x.title||x.kind||'กฎ')}</b>${x.edition?`<p class="mut">ฉบับ: ${E(x.edition)}</p>`:''}${x.excerpt?`<p><b>ประโยคที่ใช้ตัดสิน</b></p>${ruleText(x.excerpt)}<p><b>ข้อความหัวข้อเต็ม</b></p>`:''}${ruleText(x.content)}${/^https?:\/\/[^\s]+$/.test(x.url||'')?`<a href="${E(x.url)}" target="_blank" rel="noopener noreferrer">เปิดแหล่งคู่มือ</a>`:''}</section>`).join('')}</details>`;
+        }
+        const bub = m => {
+            const label = m.status==='clarify'?'ขอรายละเอียดเพิ่มเติม':m.status==='excerpt'?(m.demo?'กฎที่ค้นพบ (โหมดสาธิต)':'ยังยืนยันคำตอบไม่ได้'):m.status==='partial'?'คำตอบและข้อจำกัด':m.status==='insufficient'?'ข้อมูลยังไม่เพียงพอ':'';
+            return `<div class="bb ${m.r}${m.e ? ' err' : ''}">${m.method==='reviewed'?'<small class="mut">คำตอบตรวจเทียบกฎแล้ว</small>':''}${label?`<b>${label}</b><br>`:''}${E(chatAnswerText(m)).replace(/\n/g, '<br>')}${sourceReferences(m.sources)}${m.ms ? `<small class="mut">ตอบใน ${(m.ms / 1000).toFixed(1)} วินาที${m.demo ? ' · โหมดสาธิต ไม่ผ่านโมเดล' : ''}</small>` : ''}</div>`;
+        };
         const draw = () => { const c = $('#cv'); if (!c) return; const l = S.cv[S.lg] || [],pending=CHAT_REQUESTS.has(S.lg); c.innerHTML = (l.map(bub).join('') || '<p class="mut">ถามกฎของเกมนี้ได้เลย เช่น “จบเทิร์นต้องจั่วกี่ใบ” หรือถามต่อจากคำตอบก่อนหน้า เช่น “แล้วถ้าใช้การ์ดนี้ล่ะ” กดหัวข้ออ้างอิงใต้คำตอบเพื่ออ่านข้อความจากฐานความรู้</p>') + (pending ? '<div class="bb a mut" role="status">กำลังค้นกฎและเรียบเรียงคำตอบ...</div>' : ''); const send=$('#sendQuestion');if(send)send.disabled=pending; if (c.lastElementChild) c.lastElementChild.scrollIntoView({ block: 'nearest' }) };
         function ai(id) {
             const l = pub(); let g = G1(id || S.lg); if (!g || !(g.pub || S.ad)) g = l[0];
