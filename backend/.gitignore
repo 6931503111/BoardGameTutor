@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+data/
+data.backup-*/
+data.previous-*/
+.data-import-*/
